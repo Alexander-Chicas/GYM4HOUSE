@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Gym4House</string>
+    <string name="register_title">Regístrate en GYM4HOUSE</string>
+    <string name="hint_name">Nombre</string>
+    <string name="hint_apellido">Apellido</string>
+    <string name="hint_email">Correo Electrónico</string>
+    <string name="hint_password">Contraseña</string>
+    <string name="hint_confirm_password">Confirmar Contraseña</string>
+    <string name="hint_role">Rol (ej. Cliente)</string>
+    <string name="button_register">Registrar</string>
+    <string name="logo_content_description">Logo de Gym4House</string>
+    <string name="main_activity_welcome_text">Bienvenido a Gym4House (Contenido principal)</string>
+
+    <string name="welcome_message">Bienvenido a GYM4HOUSE</string>
+    <string name="button_create_account">Crear Cuenta</string>
+    <string name="button_sign_in">Iniciar Sesión</string>
+</resources>
