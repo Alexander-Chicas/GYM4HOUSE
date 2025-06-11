@@ -2,123 +2,148 @@ package com.example.gym4house
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
-import android.widget.EditText
+import android.util.Log // Importa Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import com.example.gym4house.data.db.AppDatabase // Asegúrate de que esta importación sea correcta
-import com.example.gym4house.data.entity.Usuario // Asegúrate de que esta importación sea correcta
-import kotlinx.coroutines.launch
+import com.example.gym4house.databinding.ActivityLoginBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var appDatabase: AppDatabase // Instancia de la base de datos Room
+    private lateinit var binding: ActivityLoginBinding
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Establece el layout para esta actividad a 'activity_login.xml'
-        setContentView(R.layout.activity_login)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        // Inicializar la instancia de la base de datos Room.
-        // Se hace aquí porque la actividad necesita el contexto para crear la base de datos.
-        appDatabase = AppDatabase.getDatabase(this)
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
 
-        // Referenciar los elementos de la interfaz de usuario (UI) por sus IDs
-        val editTextNombre = findViewById<EditText>(R.id.editTextNombre)
-        val editTextApellido = findViewById<EditText>(R.id.editTextApellido)
-        val editTextCorreo = findViewById<EditText>(R.id.editTextCorreo)
-        val editTextContrasena = findViewById<EditText>(R.id.editTextContrasena)
-        val editTextConfirmarContrasena = findViewById<EditText>(R.id.editTextConfirmarContrasena)
-        val editTextRol = findViewById<EditText>(R.id.editTextRol) // Por ahora, se usará como un simple campo de texto
-        val buttonRegistrar = findViewById<Button>(R.id.buttonRegistrar)
+        binding.buttonRegistrar.setOnClickListener {
+            Log.d("LoginActivity", "Botón de Registrar clicado.") // Log
+            performRegistration()
+        }
 
-        // Configurar el "listener" para el clic del botón de registro
-        buttonRegistrar.setOnClickListener {
-            // 1. Obtener los textos de los campos y limpiarlos de espacios en blanco
-            val nombre = editTextNombre.text.toString().trim()
-            val apellido = editTextApellido.text.toString().trim()
-            val correo = editTextCorreo.text.toString().trim()
-            val contrasena = editTextContrasena.text.toString().trim()
-            val confirmarContrasena = editTextConfirmarContrasena.text.toString().trim()
-            val rol = editTextRol.text.toString().trim()
+        binding.textViewGoToSignIn.setOnClickListener {
+            Log.d("LoginActivity", "Go to SignIn TextView clicado.") // Log
+            val intent = Intent(this, SignInActivity::class.java)
+            startActivity(intent)
+        }
+    }
 
-            // 2. Realizar validaciones básicas
-            if (nombre.isEmpty() || apellido.isEmpty() || correo.isEmpty() ||
-                contrasena.isEmpty() || confirmarContrasena.isEmpty() || rol.isEmpty()) {
-                // Mostrar un mensaje si algún campo está vacío
-                Toast.makeText(this, "Por favor, complete todos los campos.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener // Salir de la función si la validación falla
-            }
+    private fun performRegistration() {
+        val name = binding.editTextNombre.text.toString().trim()
+        val lastName = binding.editTextApellido.text.toString().trim()
+        val email = binding.editTextCorreo.text.toString().trim()
+        val password = binding.editTextContrasena.text.toString().trim()
+        val confirmPassword = binding.editTextConfirmarContrasena.text.toString().trim()
+        val role = binding.editTextRol.text.toString().trim()
 
-            if (contrasena != confirmarContrasena) {
-                // Mostrar un mensaje si las contraseñas no coinciden
-                Toast.makeText(this, "Las contraseñas no coinciden.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+        val edadStr = binding.editTextEdad.text.toString().trim()
+        val pesoStr = binding.editTextPeso.text.toString().trim()
+        val alturaStr = binding.editTextAltura.text.toString().trim()
+        val objetivo = binding.editTextObjetivo.text.toString().trim()
+        val nivelExperiencia = binding.editTextNivelExperiencia.text.toString().trim()
 
-            // --- Consideraciones importantes para una aplicación real (más allá del alcance actual) ---
-            // - **Seguridad de Contraseña:** En una aplicación real, NUNCA guardarías la contraseña directamente (sin hashear).
-            //   Deberías usar una función de hash segura (ej. BCrypt) antes de guardarla.
-            // - **Validación de Correo:** Implementar una validación de formato de correo electrónico más robusta.
-            // - **Selección de Rol:** En lugar de un EditText, usar un Spinner (menú desplegable) o RadioButtons para el rol.
 
-            // 3. Iniciar una coroutine para realizar operaciones de base de datos en segundo plano
-            // Las operaciones de Room (insert, query, etc.) que son 'suspend' deben llamarse desde una coroutine.
-            // 'lifecycleScope.launch' es ideal porque maneja el ciclo de vida de la coroutine con el de la actividad.
-            lifecycleScope.launch {
-                try {
-                    // 4. Verificar si el correo electrónico ya existe en la base de datos
-                    val existingUser = appDatabase.usuarioDao().getUsuarioByEmail(correo)
+        if (name.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty() ||
+            confirmPassword.isEmpty() || role.isEmpty() || edadStr.isEmpty() || pesoStr.isEmpty() ||
+            alturaStr.isEmpty() || objetivo.isEmpty() || nivelExperiencia.isEmpty()) {
+            Toast.makeText(this, "Por favor, completa todos los campos para registrarte.", Toast.LENGTH_LONG).show()
+            Log.d("LoginActivity", "Validación: Campos vacíos.") // Log
+            return
+        }
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(this, "Por favor, ingresa un correo electrónico válido.", Toast.LENGTH_SHORT).show()
+            Log.d("LoginActivity", "Validación: Correo inválido.") // Log
+            return
+        }
+        if (password != confirmPassword) {
+            Toast.makeText(this, "Las contraseñas no coinciden.", Toast.LENGTH_SHORT).show()
+            Log.d("LoginActivity", "Validación: Contraseñas no coinciden.") // Log
+            return
+        }
+        if (password.length < 6) {
+            Toast.makeText(this, "La contraseña debe tener al menos 6 caracteres.", Toast.LENGTH_SHORT).show()
+            Log.d("LoginActivity", "Validación: Contraseña corta.") // Log
+            return
+        }
+        if (role.length < 3) {
+            Toast.makeText(this, "El rol debe ser válido (ej. Usuario, Entrenador).", Toast.LENGTH_SHORT).show()
+            Log.d("LoginActivity", "Validación: Rol inválido.") // Log
+            return
+        }
 
-                    if (existingUser != null) {
-                        // Si el correo ya existe, notificar al usuario
-                        Toast.makeText(this@LoginActivity, "El correo electrónico ya está registrado.", Toast.LENGTH_LONG).show()
-                        Log.w("Registro", "Intento de registro con correo existente: $correo")
-                    } else {
-                        // 5. Crear un nuevo objeto Usuario con los datos del formulario
-                        val nuevoUsuario = Usuario(
-                            nombre = nombre,
-                            apellido = apellido,
-                            correoElectronico = correo,
-                            contrasenaHash = contrasena, // ¡ATENCIÓN: Hashear en producción!
-                            rol = rol,
-                            fechaNacimiento = 0L // Valor temporal, se actualizará en la pantalla de perfil
+        val edad: Int
+        val peso: Double
+        val altura: Double
+        try {
+            edad = edadStr.toInt()
+            peso = pesoStr.toDouble()
+            altura = alturaStr.toDouble()
+            Log.d("LoginActivity", "Validación: Conversión numérica exitosa.") // Log
+        } catch (e: NumberFormatException) {
+            Toast.makeText(this, "Edad, Peso y Altura deben ser números válidos.", Toast.LENGTH_SHORT).show()
+            Log.e("LoginActivity", "Validación: Error de conversión numérica", e) // Log de error
+            return
+        }
+
+        Log.d("LoginActivity", "Intentando crear usuario con Firebase Auth...") // Log
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    Log.d("LoginActivity", "Registro de Auth exitoso.") // Log
+                    val user = auth.currentUser
+                    val uid = user?.uid
+
+                    if (uid != null) {
+                        Log.d("LoginActivity", "UID obtenido: $uid. Intentando guardar en Firestore...") // Log
+                        val userProfile = hashMapOf(
+                            "uid" to uid,
+                            "nombre" to name,
+                            "apellido" to lastName,
+                            "email" to email,
+                            "rol" to role.toLowerCase(),
+                            "edad" to edad,
+                            "peso" to peso,
+                            "altura" to altura,
+                            "objetivo" to objetivo,
+                            "nivelExperiencia" to nivelExperiencia
                         )
 
-                        // 6. Insertar el nuevo usuario en la base de datos
-                        // El método insertUsuario devuelve el ID de la fila insertada.
-                        val userId = appDatabase.usuarioDao().insertUsuario(nuevoUsuario)
-
-                        if (userId > 0) { // Si userId es mayor que 0, la inserción fue exitosa
-                            Toast.makeText(this@LoginActivity, "¡Registro exitoso! ID: $userId", Toast.LENGTH_LONG).show()
-                            Log.d("Registro", "Usuario registrado: $nombre $apellido con ID: $userId")
-
-                            // 7. Opcional: Limpiar los campos del formulario después del registro exitoso
-                            editTextNombre.text.clear()
-                            editTextApellido.text.clear()
-                            editTextCorreo.text.clear()
-                            editTextContrasena.text.clear()
-                            editTextConfirmarContrasena.text.clear()
-                            editTextRol.text.clear()
-
-                            // 8. Navegar a la siguiente actividad (MainActivity en este caso)
-                            val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                            startActivity(intent)
-                            finish() // Finalizar LoginActivity para que el usuario no pueda volver atrás con el botón de retroceso
-                        } else {
-                            // Si userId no es > 0, algo salió mal con la inserción
-                            Toast.makeText(this@LoginActivity, "Error al registrar usuario.", Toast.LENGTH_LONG).show()
-                            Log.e("Registro", "La inserción del usuario devolvió un ID <= 0")
-                        }
+                        db.collection("usuarios")
+                            .document(uid)
+                            .set(userProfile)
+                            .addOnSuccessListener {
+                                Toast.makeText(this, "Registro exitoso. ¡Bienvenido!", Toast.LENGTH_LONG).show()
+                                Log.d("LoginActivity", "Perfil guardado en Firestore. Redirigiendo a WelcomeActivity...") // Log
+                                val intent = Intent(this, WelcomeActivity::class.java)
+                                startActivity(intent)
+                                finish()
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(this, "Registro exitoso, pero fallo al guardar perfil: ${e.message}", Toast.LENGTH_LONG).show()
+                                Log.e("LoginActivity", "Fallo al guardar perfil en Firestore. Redirigiendo a WelcomeActivity...", e) // Log de error
+                                val intent = Intent(this, WelcomeActivity::class.java)
+                                startActivity(intent)
+                                finish()
+                            }
+                    } else {
+                        Log.e("LoginActivity", "Registro de Auth exitoso, pero UID es nulo.", task.exception) // Log de error
+                        Toast.makeText(this, "Registro exitoso, pero UID de usuario no encontrado.", Toast.LENGTH_LONG).show()
+                        val intent = Intent(this, WelcomeActivity::class.java)
+                        startActivity(intent)
+                        finish()
                     }
-                } catch (e: Exception) {
-                    // Capturar cualquier excepción que ocurra durante la operación de base de datos
-                    Log.e("Registro", "Error inesperado al intentar registrar usuario: ${e.message}", e)
-                    Toast.makeText(this@LoginActivity, "Error interno al registrar. Intente de nuevo.", Toast.LENGTH_LONG).show()
+                } else {
+                    val errorMessage = task.exception?.message ?: "Error de registro desconocido."
+                    Toast.makeText(this, "Fallo en el registro: $errorMessage", Toast.LENGTH_LONG).show()
+                    Log.e("LoginActivity", "Fallo en el registro de Auth: $errorMessage", task.exception) // Log de error
                 }
             }
-        }
     }
 }

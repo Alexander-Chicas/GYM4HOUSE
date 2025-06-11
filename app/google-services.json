@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "15173735197",
+    "project_id": "gym4house",
+    "storage_bucket": "gym4house.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15173735197:android:467d05c86c5a5ad14187f4",
+        "android_client_info": {
+          "package_name": "com.example.gym4house"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuXsRx73zOE0mOlkBgRRHexBag9DgNXcg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

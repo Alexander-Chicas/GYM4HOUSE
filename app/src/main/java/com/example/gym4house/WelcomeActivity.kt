@@ -28,7 +28,7 @@ class WelcomeActivity : AppCompatActivity() {
         buttonSignIn.setOnClickListener {
             // Por ahora, vamos a navegar a MainActivity como un placeholder para la pantalla de inicio de sesión.
             // Más adelante, crearemos una 'SignInActivity' dedicada.
-            val intent = Intent(this, MainActivity::class.java) // Placeholder: cambiar a SignInActivity
+            val intent = Intent(this, SignInActivity::class.java) // Placeholder: cambiar a SignInActivity
             startActivity(intent) // Iniciar la actividad de inicio de sesión (temporalmente MainActivity)
             // Aquí podrías decidir si quieres llamar a finish() o no.
             // Si la pantalla de inicio de sesión no permite volver a la bienvenida, usa finish().

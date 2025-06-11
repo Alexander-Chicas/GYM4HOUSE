@@ -8,10 +8,28 @@
     <string name="hint_confirm_password">Confirmar Contraseña</string>
     <string name="hint_role">Rol (ej. Cliente)</string>
     <string name="button_register">Registrar</string>
-    <string name="logo_content_description">Logo de Gym4House</string>
     <string name="main_activity_welcome_text">Bienvenido a Gym4House (Contenido principal)</string>
-
     <string name="welcome_message">Bienvenido a GYM4HOUSE</string>
+    <string name="sign_in_title">Iniciar Sesión en GYM4HOUSE</string>
     <string name="button_create_account">Crear Cuenta</string>
     <string name="button_sign_in">Iniciar Sesión</string>
+    <string name="welcome_sign_in_prompt">Usa tu cuenta para iniciar sesión en GymForHouse</string>
+    <string name="button_sign_in_gymforhouse">Iniciar sesión con GymForhouse</string>
+    <string name="or_sign_in_with">O puedes iniciar sesión con</string>
+    <string name="button_sign_in_gmail">Inicia sesión con Gmail</string>
+    <string name="terms_privacy_notice">Al iniciar sesión aceptas nuestros Condiciones de uso y Política de privacidad.</string>
+    <string name="logo_content_description">Logo de la aplicación GymForHouse</string>
+
+    <string name="hint_edad">Edad</string>
+    <string name="hint_peso_kg">Peso (kg)</string>
+    <string name="hint_altura_cm">Altura (cm)</string>
+    <string name="hint_objetivo">Objetivo (ej. perder peso, ganar músculo)</string>
+    <string name="hint_nivel_experiencia">Nivel de Experiencia (ej. principiante, intermedio, avanzado)</string>
+
+    <string name="already_have_account_text">¿Ya tienes una cuenta? Inicia Sesión</string>
+    <color name="blue_link">#2196F3</color>
+
+
+    <string name="no_account_yet_text">¿No tienes una cuenta? Regístrate aquí</string>
+
 </resources>

@@ -1,111 +1,187 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center_horizontal"
-    android:padding="16dp"
-    tools:context=".LoginActivity">
+    android:fillViewport="true">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/logoImageView"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="32dp"
-        android:src="@drawable/logo"  android:contentDescription="@string/logo_content_description"
-        android:scaleType="centerCrop"  app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/register_title"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"/>
-
-    <EditText
-        android:id="@+id/editTextNombre"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:hint="@string/hint_name"
-        android:inputType="textPersonName"
-        android:padding="12dp"
-        android:background="@drawable/rounded_edittext_background"
-        android:importantForAutofill="yes"
-        android:autofillHints="name" />
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="16dp"
+        android:background="@color/cream_background"
+        tools:context=".LoginActivity">
 
-    <EditText
-        android:id="@+id/editTextApellido"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="@string/hint_apellido"
-        android:inputType="textPersonName"
-        android:padding="12dp"
-        android:background="@drawable/rounded_edittext_background"
-        android:importantForAutofill="yes"
-        android:autofillHints="familyName" />
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/logoImageView"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="32dp"
+            android:src="@drawable/logo"
+            android:contentDescription="@string/logo_content_description"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
 
-    <EditText
-        android:id="@+id/editTextCorreo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="@string/hint_email"
-        android:inputType="textEmailAddress"
-        android:padding="12dp"
-        android:background="@drawable/rounded_edittext_background"
-        android:importantForAutofill="yes"
-        android:autofillHints="emailAddress" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/register_title"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
 
-    <EditText
-        android:id="@+id/editTextContrasena"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="@string/hint_password"
-        android:inputType="textPassword"
-        android:padding="12dp"
-        android:background="@drawable/rounded_edittext_background"
-        android:importantForAutofill="yes"
-        android:autofillHints="password" />
+        <EditText
+            android:id="@+id/editTextNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:hint="@string/hint_name"
+            android:inputType="textPersonName"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext_background"
+            android:importantForAutofill="yes"
+            android:autofillHints="name" />
 
-    <EditText
-        android:id="@+id/editTextConfirmarContrasena"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="@string/hint_confirm_password"
-        android:inputType="textPassword"
-        android:padding="12dp"
-        android:background="@drawable/rounded_edittext_background"
-        android:importantForAutofill="no" />
+        <EditText
+            android:id="@+id/editTextApellido"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/hint_apellido"
+            android:inputType="textPersonName"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext_background"
+            android:importantForAutofill="yes"
+            android:autofillHints="familyName" />
 
-    <EditText
-        android:id="@+id/editTextRol"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="@string/hint_role"
-        android:inputType="text"
-        android:padding="12dp"
-        android:background="@drawable/rounded_edittext_background"
-        android:importantForAutofill="no" />
+        <EditText
+            android:id="@+id/editTextCorreo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/hint_email"
+            android:inputType="textEmailAddress"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext_background"
+            android:importantForAutofill="yes"
+            android:autofillHints="emailAddress" />
 
-    <Button
-        android:id="@+id/buttonRegistrar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="@string/button_register"
-        android:backgroundTint="#704212"
-        android:textColor="@android:color/white"
-        android:padding="15dp"
-        android:textSize="18sp"
-        app:cornerRadius="8dp"/>
+        <EditText
+            android:id="@+id/editTextContrasena"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/hint_password"
+            android:inputType="textPassword"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext_background"
+            android:importantForAutofill="yes"
+            android:autofillHints="password" />
 
-</LinearLayout>
+        <EditText
+            android:id="@+id/editTextConfirmarContrasena"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/hint_confirm_password"
+            android:inputType="textPassword"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext_background"
+            android:importantForAutofill="no" />
+
+        <EditText
+            android:id="@+id/editTextRol"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/hint_role"
+            android:inputType="text"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext_background"
+            android:importantForAutofill="no" />
+
+        <EditText
+            android:id="@+id/editTextEdad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/hint_edad"
+            android:inputType="number"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext_background"
+            android:importantForAutofill="no" />
+
+        <EditText
+            android:id="@+id/editTextPeso"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/hint_peso_kg"
+            android:inputType="numberDecimal"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext_background"
+            android:importantForAutofill="no" />
+
+        <EditText
+            android:id="@+id/editTextAltura"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/hint_altura_cm"
+            android:inputType="numberDecimal"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext_background"
+            android:importantForAutofill="no" />
+
+        <EditText
+            android:id="@+id/editTextObjetivo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/hint_objetivo"
+            android:inputType="textCapSentences"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext_background"
+            android:importantForAutofill="no" />
+
+        <EditText
+            android:id="@+id/editTextNivelExperiencia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/hint_nivel_experiencia"
+            android:inputType="textCapSentences"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext_background"
+            android:importantForAutofill="no" />
+
+        <Button
+            android:id="@+id/buttonRegistrar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/button_register"
+            android:backgroundTint="?attr/colorPrimaryVariant"
+            android:textColor="?attr/colorOnPrimary"
+            android:padding="15dp"
+            android:textSize="18sp"
+            app:cornerRadius="8dp"/>
+
+        <TextView
+            android:id="@+id/textViewGoToSignIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/already_have_account_text"
+            android:textColor="@color/blue_link"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"
+            android:padding="8dp"/>
+
+    </LinearLayout>
+</ScrollView>
