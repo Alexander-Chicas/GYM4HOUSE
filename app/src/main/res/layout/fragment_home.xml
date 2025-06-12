@@ -1,15 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/cream_background"
     tools:context=".HomeFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="¡Bienvenido a la pantalla de Inicio!"
-        android:textSize="24sp"
-        android:layout_gravity="center" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/tvGreeting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¡Hola, Alexander!"
+                android:textColor="@color/black"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:layout_marginTop="24dp"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/tvMotivationalQuote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tu disciplina es el puente hacia tus metas."
+                android:textColor="@color/text_dark_gray"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="24dp"
+                android:gravity="center"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp"
+                android:layout_margin="8dp"
+                app:cardBackgroundColor="@color/gym_edit_text">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tu Entrenamiento Hoy"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/tvNextReminder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Cargando próximo recordatorio..."
+                        android:textColor="@color/text_dark_gray"
+                        android:textSize="16sp"/>
+
+                    <Button
+                        android:id="@+id/btnEditReminders"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Ver / Editar Recordatorios"
+                        android:textColor="@color/white"
+                        android:backgroundTint="@color/gym_brown_primary"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_gravity="end"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <Button
+                android:id="@+id/btnStartWorkout"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="INICIAR ENTRENAMIENTO"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:backgroundTint="@color/gym_brown_primary"
+                app:cornerRadius="12dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Accesos Rápidos"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginTop="32dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="16dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp">
+
+                <Button
+                    android:id="@+id/btnMyRoutines"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Mis Rutinas"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
+                    android:backgroundTint="@color/gym_edit_text"
+                    android:textColor="@color/text_dark_gray"
+                    android:gravity="center"
+                    android:layout_marginEnd="8dp"
+                    app:cornerRadius="12dp" />
+
+                <Button
+                    android:id="@+id/btnMyProgress"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Mi Progreso"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
+                    android:backgroundTint="@color/gym_edit_text"
+                    android:textColor="@color/text_dark_gray"
+                    android:gravity="center"
+                    android:layout_marginStart="8dp"
+                    app:cornerRadius="12dp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnExploreExercises"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="Explorar Ejercicios"
+                android:padding="16dp"
+                android:gravity="center"
+                android:backgroundTint="@color/gym_edit_text"
+                android:textColor="@color/text_dark_gray"
+                app:cornerRadius="12dp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="80dp" />
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

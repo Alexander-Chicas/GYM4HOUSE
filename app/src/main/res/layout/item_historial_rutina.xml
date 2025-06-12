@@ -5,54 +5,55 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardCornerRadius="8dp"
-    android:background="@color/gym_edit_text"
+    android:background="@color/cream_background"
     app:cardElevation="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@color/cream_background"
+        android:background="@color/gym_edit_text"
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/textViewNombreEjercicio"
+            android:id="@+id/textViewHistorialNombreRutina"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nombre del Ejercicio"
+            android:text="Nombre de la Rutina Completada"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginBottom="4dp"/>
 
+        <TextView
+            android:id="@+id/textViewHistorialFecha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fecha: DD/MM/AAAA HH:MM"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginBottom="8dp"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="4dp">
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/textViewSeries"
+                android:id="@+id/textViewHistorialDuracion"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Series: X"
+                android:text="Duración: X min"
                 android:textSize="14sp"/>
 
             <TextView
-                android:id="@+id/textViewRepeticiones"
+                android:id="@+id/textViewHistorialNivel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Repeticiones: Y"
+                android:text="Nivel: "
                 android:textSize="14sp"/>
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/textViewDescanso"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Descanso: Z segundos"
-            android:textSize="14sp"/>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

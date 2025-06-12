@@ -106,11 +106,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/button_sign_in_gmail"
-            android:backgroundTint="?attr/colorSecondary"
+            android:backgroundTint="@color/gym_brown_variant"
             android:textColor="?attr/colorOnSecondary"
             android:padding="15dp"
             android:textSize="18sp"
-            app:icon="@drawable/ic_google" app:iconGravity="textStart"
+            app:icon="@drawable/gmail76" app:iconGravity="textStart"
             app:cornerRadius="8dp" />
 
         <TextView

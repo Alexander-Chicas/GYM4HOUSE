@@ -31,5 +31,30 @@
 
 
     <string name="no_account_yet_text">¿No tienes una cuenta? Regístrate aquí</string>
+    <string-array name="tipos_rutina_array">
+        <item>Todos los Tipos</item>
+        <item>Tren Superior</item>
+        <item>Tren Inferior</item>
+        <item>Full Body</item>
+        <item>Cardio</item>
+        <item>Core</item>
+    </string-array>
 
+    <string-array name="niveles_rutina_array">
+        <item>Todos los Niveles</item>
+        <item>Principiante</item>
+        <item>Intermedio</item>
+        <item>Avanzado</item>
+    </string-array>
+
+
+
+    <string-array name="objetivos_usuario_array">
+        <item>Selecciona tu Objetivo</item>
+        <item>Perder Peso</item>
+        <item>Ganar Masa Muscular</item>
+        <item>Mejorar Resistencia</item>
+        <item>Mantener Forma</item>
+        <item>Aumentar Fuerza</item>
+    </string-array>
 </resources>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/gym_edit_text"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/textViewCardNombreRutina"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nombre de la Rutina"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:id="@+id/textViewCardDescripcionRutina"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Descripción corta de la rutina para dar contexto."
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="4dp">
+
+            <TextView
+                android:id="@+id/textViewCardTipo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tipo: Full Body"
+                android:textSize="14sp"
+                android:textStyle="italic"
+                android:layout_marginEnd="16dp"/>
+
+            <TextView
+                android:id="@+id/textViewCardNivel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nivel: Intermedio"
+                android:textSize="14sp"
+                android.textStyle="italic"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textViewCardDuracion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Duración: 45 minutos"
+            android:textSize="14sp"
+            android:textStyle="italic"/>
+
+        <Button
+            android:id="@+id/buttonGuardarRutina"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Guardar"
+            android:backgroundTint="@color/gym_brown_primary"
+            android:layout_marginTop="8dp"
+            android:layout_gravity="end"/> </LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -137,27 +137,23 @@
             android:background="@drawable/rounded_edittext_background"
             android:importantForAutofill="no" />
 
-        <EditText
-            android:id="@+id/editTextObjetivo"
+        <Spinner
+            android:id="@+id/spinnerObjetivo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:hint="@string/hint_objetivo"
-            android:inputType="textCapSentences"
-            android:padding="12dp"
-            android:background="@drawable/rounded_edittext_background"
-            android:importantForAutofill="no" />
+            android:minHeight="48dp"
+            android:entries="@array/objetivos_usuario_array"
+            android:background="@drawable/rounded_edittext_background" android:padding="12dp" />
 
-        <EditText
-            android:id="@+id/editTextNivelExperiencia"
+        <Spinner
+            android:id="@+id/spinnerNivelExperiencia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:hint="@string/hint_nivel_experiencia"
-            android:inputType="textCapSentences"
-            android:padding="12dp"
-            android:background="@drawable/rounded_edittext_background"
-            android:importantForAutofill="no" />
+            android:minHeight="48dp"
+            android:entries="@array/niveles_rutina_array"
+            android:background="@drawable/rounded_edittext_background" android:padding="12dp" />
 
         <Button
             android:id="@+id/buttonRegistrar"

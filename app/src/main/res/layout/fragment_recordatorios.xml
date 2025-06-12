@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center_horizontal"
+    android:background="@color/cream_background"
+    tools:context=".RecordatoriosFragment">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Configurar Recordatorios"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp"
+        android:textColor="@color/gym_brown_primary"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hora del Recordatorio"
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp"
+        android:textColor="@android:color/black"/>
+
+    <TextView
+        android:id="@+id/textViewSelectedTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Selecciona la hora"
+        android:textSize="22sp"
+        android:padding="12dp"
+        android:background="@drawable/rounded_edittext_background"
+        android:gravity="center"
+        android:drawableEnd="@android:drawable/ic_lock_idle_alarm"
+        android:drawableTint="@color/gym_brown_primary"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_marginBottom="24dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Días de la Semana"
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp"
+        android:textColor="@android:color/black"/>
+
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:columnCount="2"
+        android:rowCount="4"
+        android:layout_marginBottom="32dp"
+        android:layout_gravity="center_horizontal">
+
+        <CheckBox
+            android:id="@+id/checkBoxLunes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lunes"
+            android:layout_columnWeight="1"
+            android:padding="8dp"/>
+        <CheckBox
+            android:id="@+id/checkBoxMartes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Martes"
+            android:layout_columnWeight="1"
+            android:padding="8dp"/>
+        <CheckBox
+            android:id="@+id/checkBoxMiercoles"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Miércoles"
+            android:layout_columnWeight="1"
+            android:padding="8dp"/>
+        <CheckBox
+            android:id="@+id/checkBoxJueves"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Jueves"
+            android:layout_columnWeight="1"
+            android:padding="8dp"/>
+        <CheckBox
+            android:id="@+id/checkBoxViernes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Viernes"
+            android:layout_columnWeight="1"
+            android:padding="8dp"/>
+        <CheckBox
+            android:id="@+id/checkBoxSabado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sábado"
+            android:layout_columnWeight="1"
+            android:padding="8dp"/>
+        <CheckBox
+            android:id="@+id/checkBoxDomingo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Domingo"
+            android:layout_columnWeight="1"
+            android:padding="8dp"/>
+
+    </GridLayout>
+
+    <Button
+        android:id="@+id/buttonGuardarRecordatorio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Guardar Recordatorio"
+        android:backgroundTint="@color/gym_brown_primary"
+        android:layout_marginBottom="8dp"/>
+
+</LinearLayout>
