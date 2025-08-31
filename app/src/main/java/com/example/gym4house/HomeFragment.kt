@@ -88,7 +88,7 @@ class HomeFragment : Fragment() {
         val user = auth.currentUser
         if (user != null) {
             val userId = user.uid
-            db.collection("users").document(userId)
+            db.collection("usuarios").document(userId)
                 .get()
                 .addOnSuccessListener { document ->
                     if (document != null && document.exists()) {

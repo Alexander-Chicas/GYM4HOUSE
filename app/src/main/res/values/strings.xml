@@ -14,7 +14,7 @@
     <string name="button_create_account">Crear Cuenta</string>
     <string name="button_sign_in">Iniciar Sesión</string>
     <string name="welcome_sign_in_prompt">Usa tu cuenta para iniciar sesión en GymForHouse</string>
-    <string name="button_sign_in_gymforhouse">Iniciar sesión con GymForhouse</string>
+    <string name="button_sign_in_gymforhouse">Iniciar sesión con Gym4House</string>
     <string name="or_sign_in_with">O puedes iniciar sesión con</string>
     <string name="button_sign_in_gmail">Inicia sesión con Gmail</string>
     <string name="terms_privacy_notice">Al iniciar sesión aceptas nuestros Condiciones de uso y Política de privacidad.</string>
