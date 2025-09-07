@@ -1,298 +1,180 @@
 package com.example.gym4house
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.Spinner
 import android.widget.Toast
-import com.google.android.material.textfield.TextInputEditText
-// import com.google.android.material.switchmaterial.SwitchMaterial // Ya no es necesario si quitamos el Switch
+import androidx.fragment.app.Fragment
+import com.example.gym4house.data.dao.PerfilClienteDao
+import com.example.gym4house.data.dao.UsuarioDao
+import com.example.gym4house.data.entity.PerfilCliente
+import com.example.gym4house.data.entity.Usuario
+import com.example.gym4house.databinding.FragmentPerfilBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PerfilFragment : Fragment() {
 
-    private lateinit var auth: FirebaseAuth
+    private var _binding: FragmentPerfilBinding? = null
+    private val binding get() = _binding!!
+
+    private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
-
-    // TextInputEditTexts para editar la información del usuario
-    private lateinit var editTextNombre: TextInputEditText
-    private lateinit var editTextEmail: TextInputEditText
-    private lateinit var editTextEdad: TextInputEditText
-    private lateinit var editTextAltura: TextInputEditText
-    private lateinit var editTextPeso: TextInputEditText
-
-    // Spinners para Nivel de Experiencia y Objetivo
-    private lateinit var spinnerNivelExperiencia: Spinner
-    private lateinit var spinnerObjetivo: Spinner
-
-    // PREFERENCIAS (Solo tipo de ejercicios, Idioma y Notificaciones eliminados)
-    private lateinit var spinnerTipoEjercicios: Spinner // Spinner para Tipo de Ejercicios
-
-    private lateinit var buttonGuardarCambios: Button
-    private lateinit var buttonCambiarPassword: Button
-    private lateinit var buttonConfigurarRecordatorios: Button
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        auth = FirebaseAuth.getInstance()
-        firestore = FirebaseFirestore.getInstance()
-    }
+    private lateinit var perfilClienteDao: PerfilClienteDao
+    private lateinit var usuarioDao: UsuarioDao
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_perfil, container, false)
+    ): View {
+        _binding = FragmentPerfilBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        // Inicializar los TextInputEditTexts
-        editTextNombre = view.findViewById(R.id.editTextPerfilNombre)
-        editTextEmail = view.findViewById(R.id.editTextPerfilEmail)
-        editTextEdad = view.findViewById(R.id.editTextPerfilEdad)
-        editTextAltura = view.findViewById(R.id.editTextPerfilAltura)
-        editTextPeso = view.findViewById(R.id.editTextPerfilPeso)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        // Inicializar los Spinners de perfil existentes
-        spinnerNivelExperiencia = view.findViewById(R.id.spinnerPerfilNivelExperiencia)
-        spinnerObjetivo = view.findViewById(R.id.spinnerPerfilObjetivo)
+        firebaseAuth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
+        // Inicializar DAOs (asume que ya tienes una base de datos Room configurada)
+        // perfilClienteDao = AppDatabase.getDatabase(requireContext()).perfilClienteDao()
+        // usuarioDao = AppDatabase.getDatabase(requireContext()).usuarioDao()
 
-        // Inicializar el Spinner de Tipo de Ejercicios (Idioma y Notificaciones eliminados)
-        spinnerTipoEjercicios = view.findViewById(R.id.spinnerPerfilTipoEjercicios)
+        setupSpinners()
+        loadUserProfile()
+        setupListeners()
+    }
 
-        // Configurar adaptadores para los Spinners existentes
-        val nivelesAdapter = ArrayAdapter.createFromResource(
+    private fun setupSpinners() {
+        val experienceAdapter = ArrayAdapter.createFromResource(
             requireContext(),
-            R.array.niveles_rutina_array,
+            R.array.experience_level_options,
             android.R.layout.simple_spinner_item
         )
-        nivelesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerNivelExperiencia.adapter = nivelesAdapter
+        experienceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerPerfilNivelExperiencia.adapter = experienceAdapter
 
-        val objetivosAdapter = ArrayAdapter.createFromResource(
+        val goalAdapter = ArrayAdapter.createFromResource(
             requireContext(),
-            R.array.objetivos_usuario_array,
+            R.array.goal_options,
             android.R.layout.simple_spinner_item
         )
-        objetivosAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerObjetivo.adapter = objetivosAdapter
+        goalAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerPerfilObjetivo.adapter = goalAdapter
 
-        // Configurar adaptador para el Spinner de Tipo de Ejercicios
-        val tiposEjerciciosAdapter = ArrayAdapter.createFromResource(
+        val exerciseTypeAdapter = ArrayAdapter.createFromResource(
             requireContext(),
-            R.array.tipos_rutina_array,
+            R.array.exercise_type_options,
             android.R.layout.simple_spinner_item
         )
-        tiposEjerciciosAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerTipoEjercicios.adapter = tiposEjerciciosAdapter
+        exerciseTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerPerfilTipoEjercicios.adapter = exerciseTypeAdapter
+    }
 
+    private fun loadUserProfile() {
+        val currentUser = firebaseAuth.currentUser
+        if (currentUser != null) {
+            binding.editTextPerfilEmail.setText(currentUser.email)
 
-        buttonGuardarCambios = view.findViewById(R.id.buttonGuardarCambios)
-        buttonCambiarPassword = view.findViewById(R.id.buttonCambiarPassword)
-        buttonConfigurarRecordatorios = view.findViewById(R.id.buttonConfigurarRecordatorios)
+            firestore.collection("usuarios").document(currentUser.uid)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        binding.editTextPerfilNombre.setText(document.getString("nombre") ?: "")
+                        binding.editTextPerfilEdad.setText(document.getLong("edad")?.toString() ?: "")
+                        binding.editTextPerfilAltura.setText(document.getDouble("altura")?.toString() ?: "")
+                        binding.editTextPerfilPeso.setText(document.getDouble("peso")?.toString() ?: "")
 
-        loadUserProfile() // Cargar los datos del perfil al inicio
+                        val experienceLevel = document.getString("nivel_experiencia")
+                        val goal = document.getString("objetivo_principal")
+                        val exerciseType = document.getString("tipo_ejercicio_preferido")
 
-        buttonGuardarCambios.setOnClickListener {
-            saveUserProfile() // Guardar los cambios
+                        setSelectedSpinnerItem(binding.spinnerPerfilNivelExperiencia, experienceLevel)
+                        setSelectedSpinnerItem(binding.spinnerPerfilObjetivo, goal)
+                        setSelectedSpinnerItem(binding.spinnerPerfilTipoEjercicios, exerciseType)
+
+                    } else {
+                        Toast.makeText(requireContext(), "Datos de perfil no encontrados.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(requireContext(), "Error al cargar el perfil: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
+    private fun setSelectedSpinnerItem(spinner: android.widget.Spinner, value: String?) {
+        if (value != null) {
+            val adapter = spinner.adapter as ArrayAdapter<String>
+            val spinnerPosition = adapter.getPosition(value)
+            if (spinnerPosition != -1) {
+                spinner.setSelection(spinnerPosition)
+            }
+        }
+    }
+
+    private fun setupListeners() {
+        binding.buttonGuardarCambios.setOnClickListener {
+            saveUserProfile()
         }
 
-        buttonCambiarPassword.setOnClickListener {
-            sendPasswordResetEmail() // Enviar correo de restablecimiento de contraseña
-        }
-
-        buttonConfigurarRecordatorios.setOnClickListener {
+        binding.buttonCambiarPassword.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, RecordatoriosFragment())
+                .replace(R.id.fragment_container, ChangePasswordFragment())
                 .addToBackStack(null)
                 .commit()
         }
 
-        return view
-    }
-
-    private fun loadUserProfile() {
-        val userId = auth.currentUser?.uid
-        val userEmail = auth.currentUser?.email
-
-        if (userId == null) {
-            Toast.makeText(context, "No hay usuario autenticado.", Toast.LENGTH_SHORT).show()
-            editTextNombre.setText("")
-            editTextEmail.setText("")
-            spinnerNivelExperiencia.setSelection(0)
-            spinnerObjetivo.setSelection(0)
-            spinnerTipoEjercicios.setSelection(0) // Reset tipo ejercicios
-            editTextEdad.setText("")
-            editTextAltura.setText("")
-            editTextPeso.setText("")
-            return
+        binding.buttonConfigurarRecordatorios.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, RemindersSettingsFragment())
+                .addToBackStack(null)
+                .commit()
         }
 
-        editTextEmail.setText(userEmail ?: "")
-
-        firestore.collection("usuarios").document(userId)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    editTextNombre.setText(document.getString("nombre") ?: "")
-                    editTextEdad.setText(document.getLong("edad")?.toString() ?: "")
-                    editTextAltura.setText(document.getLong("altura")?.toString() ?: "")
-                    editTextPeso.setText(document.getLong("peso")?.toString() ?: "")
-
-                    // Cargar y seleccionar el valor en el Spinner de Nivel de Experiencia
-                    val nivelExperiencia = document.getString("nivelExperiencia")
-                    if (nivelExperiencia != null) {
-                        val adapter = spinnerNivelExperiencia.adapter as ArrayAdapter<String>
-                        val spinnerPosition = adapter.getPosition(nivelExperiencia)
-                        if (spinnerPosition >= 0) {
-                            spinnerNivelExperiencia.setSelection(spinnerPosition)
-                        } else {
-                            spinnerNivelExperiencia.setSelection(0)
-                        }
-                    } else {
-                        spinnerNivelExperiencia.setSelection(0)
-                    }
-
-                    // Cargar y seleccionar el valor en el Spinner de Objetivo
-                    val objetivo = document.getString("objetivo")
-                    if (objetivo != null) {
-                        val adapter = spinnerObjetivo.adapter as ArrayAdapter<String>
-                        val spinnerPosition = adapter.getPosition(objetivo)
-                        if (spinnerPosition >= 0) {
-                            spinnerObjetivo.setSelection(spinnerPosition)
-                        } else {
-                            spinnerObjetivo.setSelection(0)
-                        }
-                    } else {
-                        spinnerObjetivo.setSelection(0)
-                    }
-
-                    // Cargar y seleccionar el valor en el Spinner de Tipo de Ejercicios
-                    val tipoEjercicio = document.getString("tipoEjercicio")
-                    if (tipoEjercicio != null) {
-                        val adapter = spinnerTipoEjercicios.adapter as ArrayAdapter<String>
-                        val spinnerPosition = adapter.getPosition(tipoEjercicio)
-                        if (spinnerPosition >= 0) {
-                            spinnerTipoEjercicios.setSelection(spinnerPosition)
-                        } else {
-                            spinnerTipoEjercicios.setSelection(0)
-                        }
-                    } else {
-                        spinnerTipoEjercicios.setSelection(0)
-                    }
-
-                    // Idioma y Notificaciones ya no se cargan
-
-                } else {
-                    Toast.makeText(context, "No se encontró el perfil de usuario en la base de datos.", Toast.LENGTH_SHORT).show()
-                }
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(context, "Error al cargar perfil: ${e.message}", Toast.LENGTH_LONG).show()
-            }
+        binding.buttonCerrarSesion.setOnClickListener {
+            firebaseAuth.signOut()
+            val intent = Intent(activity, WelcomeActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            activity?.finish()
+        }
     }
 
     private fun saveUserProfile() {
-        val userId = auth.currentUser?.uid
-        if (userId == null) {
-            Toast.makeText(context, "No hay usuario autenticado para guardar cambios.", Toast.LENGTH_SHORT).show()
-            return
-        }
+        val currentUser = firebaseAuth.currentUser
+        if (currentUser != null) {
+            val userId = currentUser.uid
+            val userProfile = hashMapOf(
+                "nombre" to binding.editTextPerfilNombre.text.toString(),
+                "edad" to binding.editTextPerfilEdad.text.toString().toLongOrNull(),
+                "altura" to binding.editTextPerfilAltura.text.toString().toDoubleOrNull(),
+                "peso" to binding.editTextPerfilPeso.text.toString().toDoubleOrNull(),
+                "nivel_experiencia" to binding.spinnerPerfilNivelExperiencia.selectedItem.toString(),
+                "objetivo_principal" to binding.spinnerPerfilObjetivo.selectedItem.toString(),
+                "tipo_ejercicio_preferido" to binding.spinnerPerfilTipoEjercicios.selectedItem.toString()
+            )
 
-        val nombre = editTextNombre.text.toString().trim()
-        val edadStr = editTextEdad.text.toString().trim()
-        val alturaStr = editTextAltura.text.toString().trim()
-        val pesoStr = editTextPeso.text.toString().trim()
-
-        // Obtener valores de los Spinners existentes
-        val nivelExperiencia = spinnerNivelExperiencia.selectedItem.toString()
-        val objetivo = spinnerObjetivo.selectedItem.toString()
-
-        // Obtener valor del Spinner de Tipo de Ejercicios
-        val tipoEjercicio = spinnerTipoEjercicios.selectedItem.toString()
-
-        // Validaciones básicas para EditTexts
-        if (nombre.isEmpty()) {
-            editTextNombre.error = "El nombre es requerido"
-            return
-        }
-
-        // Validaciones para Spinners existentes
-        if (nivelExperiencia == "Todos los Niveles" || nivelExperiencia.isEmpty()) {
-            Toast.makeText(context, "Por favor, selecciona tu nivel de experiencia.", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (objetivo == "Selecciona tu Objetivo" || objetivo.isEmpty()) {
-            Toast.makeText(context, "Por favor, selecciona tu objetivo.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        // Validaciones para Spinner de Tipo de Ejercicios
-        if (tipoEjercicio == "Selecciona Tipo de Ejercicio" || tipoEjercicio.isEmpty()) {
-            Toast.makeText(context, "Por favor, selecciona tu tipo de ejercicio preferido.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val edad = edadStr.toLongOrNull()
-        val altura = alturaStr.toLongOrNull()
-        val peso = pesoStr.toDoubleOrNull()
-
-        if (edad == null || edad <= 0) {
-            editTextEdad.error = "Edad inválida"
-            return
-        }
-        if (altura == null || altura <= 0) {
-            editTextAltura.error = "Altura inválida"
-            return
-        }
-        if (peso == null || peso <= 0) {
-            editTextPeso.error = "Peso inválido"
-            return
-        }
-
-        val userUpdates = hashMapOf(
-            "nombre" to nombre,
-            "nivelExperiencia" to nivelExperiencia,
-            "objetivo" to objetivo,
-            "edad" to edad,
-            "altura" to altura,
-            "peso" to peso,
-            "tipoEjercicio" to tipoEjercicio // Sólo este campo de las preferencias
-        )
-
-        firestore.collection("usuarios").document(userId)
-            .update(userUpdates as Map<String, Any>)
-            .addOnSuccessListener {
-                Toast.makeText(context, "Perfil actualizado correctamente.", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(context, "Error al actualizar perfil: ${e.message}", Toast.LENGTH_LONG).show()
-            }
-    }
-
-    private fun sendPasswordResetEmail() {
-        val user = auth.currentUser
-        val email = user?.email
-
-        if (email != null) {
-            auth.sendPasswordResetEmail(email)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Toast.makeText(context, "Se ha enviado un correo de restablecimiento de contraseña a $email. Por favor, revisa tu bandeja de entrada.", Toast.LENGTH_LONG).show()
-                    } else {
-                        Toast.makeText(context, "Error al enviar el correo de restablecimiento: ${task.exception?.message}", Toast.LENGTH_LONG).show()
-                    }
+            firestore.collection("usuarios").document(userId)
+                .update(userProfile as Map<String, Any>) // Cast for Firebase
+                .addOnSuccessListener {
+                    Toast.makeText(requireContext(), "Perfil actualizado correctamente.", Toast.LENGTH_SHORT).show()
                 }
-        } else {
-            Toast.makeText(context, "No se encontró un correo electrónico para enviar el restablecimiento de contraseña.", Toast.LENGTH_SHORT).show()
+                .addOnFailureListener { e ->
+                    Toast.makeText(requireContext(), "Error al actualizar el perfil: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        loadUserProfile()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

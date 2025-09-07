@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="reminder_frequency_options">
+        <item>Diario</item>
+        <item>Semanal</item>
+        <item>Mensual</item>
+    </string-array>
+    <string-array name="experience_level_options">
+        <item>Principiante</item>
+        <item>Intermedio</item>
+        <item>Avanzado</item>
+    </string-array>
+    <string-array name="goal_options">
+        <item>Perder Peso</item>
+        <item>Ganar Músculo</item>
+        <item>Mantenerse en Forma</item>
+        <item>Mejorar Resistencia</item>
+    </string-array>
+    <string-array name="exercise_type_options">
+        <item>Fuerza</item>
+        <item>Cardio</item>
+        <item>Flexibilidad</item>
+        <item>Híbrido</item>
+    </string-array>
+</resources>
