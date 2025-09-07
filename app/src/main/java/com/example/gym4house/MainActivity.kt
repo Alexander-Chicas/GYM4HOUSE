@@ -9,6 +9,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.example.gym4house.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.example.gym4house.ProgessiveFragment // <-- ¡Nueva importación!
 
 class MainActivity : AppCompatActivity() {
 
@@ -46,6 +47,10 @@ class MainActivity : AppCompatActivity() {
                     replaceFragment(RutinasFragment())
                     true
                 }
+                R.id.navigation_progreso -> { // <-- ¡Nuevo caso para Progreso!
+                    replaceFragment(ProgessiveFragment())
+                    true
+                }
                 R.id.navigation_perfil -> {
                     replaceFragment(PerfilFragment())
                     true
@@ -59,7 +64,8 @@ class MainActivity : AppCompatActivity() {
         // Controla la visibilidad de la barra de navegación basado en el tipo de fragmento
         if (fragment is LoginFragment) {
             showBottomNav(false)
-        } else {
+        }
+        else {
             showBottomNav(true)
         }
 

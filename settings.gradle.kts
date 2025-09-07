@@ -1,9 +1,10 @@
+import org.gradle.api.initialization.resolve.RepositoriesMode
 pluginManagement {
     repositories {
         google {
             content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("com.android.*")
+                includeGroupByRegex("com.google.*")
                 includeGroupByRegex("androidx.*")
             }
         }
@@ -16,9 +17,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("https://www.jitpack.io") } // <-- ¡Añadido aquí!
     }
 }
 
 rootProject.name = "GYM4HOUSE"
 include(":app")
- 

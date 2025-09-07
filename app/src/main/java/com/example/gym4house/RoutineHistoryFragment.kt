@@ -51,7 +51,7 @@ class RoutineHistoryFragment : Fragment() {
 
         firestore.collection("usuarios")
             .document(userId)
-            .collection("historialrutinas")
+            .collection("progreso")
             .orderBy("fechaCompletado", com.google.firebase.firestore.Query.Direction.DESCENDING) // Ordenar por fecha, los más recientes primero
             .get()
             .addOnSuccessListener { documents ->

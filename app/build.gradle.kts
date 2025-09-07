@@ -12,6 +12,9 @@ android {
     namespace = "com.example.gym4house"
     compileSdk = 34
 
+    // EL BLOQUE REPOSITORIES HA SIDO ELIMINADO DE AQUÍ.
+    // AHORA SE GESTIONA GLOBALMENTE EN settings.gradle.kts
+
     defaultConfig {
         applicationId = "com.example.gym4house"
         minSdk = 24
@@ -72,6 +75,9 @@ dependencies {
     // Navigation Component
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
+
+    // MPAndroidChart para gráficos
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
