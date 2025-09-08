@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cream_background"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:id="@+id/restrictionsProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"
+            android:indeterminateTint="#8B4513"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Restricciones de salud"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:gravity="center_horizontal"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cuéntanos tus condiciones o restricciones\npara personalizar mejor tu plan."
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:gravity="center_horizontal"
+            android:layout_marginBottom="32dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Alergias alimentarias"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="16dp" />
+
+        <GridLayout
+            android:id="@+id/gridLayoutAlergias"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:rowCount="4"
+            android:alignmentMode="alignMargins"
+            android:columnOrderPreserved="false"
+            android:layout_marginBottom="16dp">
+
+            <CheckBox
+                android:id="@+id/checkBoxGluten"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="Gluten" />
+
+            <CheckBox
+                android:id="@+id/checkBoxLactosa"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="Lactosa" />
+
+            <CheckBox
+                android:id="@+id/checkBoxNueces"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="Nueces" />
+
+            <CheckBox
+                android:id="@+id/checkBoxMariscos"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="Mariscos" />
+
+            <CheckBox
+                android:id="@+id/checkBoxOtraAlergia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Otro" />
+
+            <EditText
+                android:id="@+id/editTextOtraAlergia"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:hint=""
+                android:paddingStart="8dp" />
+
+            <CheckBox
+                android:id="@+id/checkBoxNingunaAlergia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:text="Ninguna de las anteriores" />
+        </GridLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Condiciones médicas"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="16dp" />
+
+        <GridLayout
+            android:id="@+id/gridLayoutCondicionesMedicas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:rowCount="4"
+            android:alignmentMode="alignMargins"
+            android:columnOrderPreserved="false"
+            android:layout_marginBottom="16dp">
+
+            <CheckBox
+                android:id="@+id/checkBoxHipertension"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="Hipertensión" />
+
+            <CheckBox
+                android:id="@+id/checkBoxDiabetes"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="Diabetes" />
+
+            <CheckBox
+                android:id="@+id/checkBoxAsma"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="Asma" />
+
+            <CheckBox
+                android:id="@+id/checkBoxProblemasCardiacos"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="Problemas cardiacos" />
+
+            <CheckBox
+                android:id="@+id/checkBoxOtraCondicion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Otro" />
+
+            <EditText
+                android:id="@+id/editTextOtraCondicion"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:hint=""
+                android:paddingStart="8dp" />
+
+            <CheckBox
+                android:id="@+id/checkBoxNingunaCondicion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:text="Ninguna de las anteriores" />
+        </GridLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Restricciones físicas"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="16dp" />
+
+        <GridLayout
+            android:id="@+id/gridLayoutRestriccionesFisicas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:rowCount="3"
+            android:alignmentMode="alignMargins"
+            android:columnOrderPreserved="false"
+            android:layout_marginBottom="16dp">
+
+            <CheckBox
+                android:id="@+id/checkBoxDolorRodilla"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="Dolor de rodilla" />
+
+            <CheckBox
+                android:id="@+id/checkBoxDolorEspalda"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="Dolor de espalda" />
+
+            <CheckBox
+                android:id="@+id/checkBoxLesionMuscular"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="Lesión muscular" />
+
+            <CheckBox
+                android:id="@+id/checkBoxOtraRestriccion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Otro" />
+
+            <EditText
+                android:id="@+id/editTextOtraRestriccion"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:hint=""
+                android:paddingStart="8dp" />
+        </GridLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Notas médicas"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/editTextNotasMedicas"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:gravity="top"
+            android:inputType="textMultiLine"
+            android:background="@drawable/rounded_edittext_background"
+            android:padding="12dp"
+            android:layout_marginBottom="32dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:layout_marginBottom="16dp">
+
+            <Button
+                android:id="@+id/buttonGuardar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Guardar restricciones"
+                android:backgroundTint="#8B4513"
+                android:textColor="#FFFFFF"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/buttonOmitir"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Omitir por ahora"
+                android:backgroundTint="#E0E0E0"
+                android:textColor="#333333" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

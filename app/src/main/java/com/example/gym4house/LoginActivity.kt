@@ -3,8 +3,8 @@ package com.example.gym4house
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.ArrayAdapter // Importa ArrayAdapter
-import android.widget.Spinner // Importa Spinner
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.gym4house.databinding.ActivityLoginBinding
@@ -20,6 +20,11 @@ class LoginActivity : AppCompatActivity() {
     // Declarar los Spinners
     private lateinit var spinnerObjetivo: Spinner
     private lateinit var spinnerNivelExperiencia: Spinner
+
+    // Eliminamos la constante SHOW_HEALTH_RESTRICTIONS_EXTRA porque ya no se usará este enfoque.
+    // companion object {
+    //     const val SHOW_HEALTH_RESTRICTIONS_EXTRA = "show_health_restrictions"
+    // }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,11 +79,11 @@ class LoginActivity : AppCompatActivity() {
         val pesoStr = binding.editTextPeso.text.toString().trim()
         val alturaStr = binding.editTextAltura.text.toString().trim()
 
-        // Obtener valores de los Spinners (¡NUEVO!)
+        // Obtener valores de los Spinners
         val objetivo = spinnerObjetivo.selectedItem.toString()
         val nivelExperiencia = spinnerNivelExperiencia.selectedItem.toString()
 
-        // Validaciones de campos EditText (algunos cambiados)
+        // Validaciones de campos EditText
         if (name.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty() ||
             confirmPassword.isEmpty() || role.isEmpty() || edadStr.isEmpty() || pesoStr.isEmpty() ||
             alturaStr.isEmpty()) {
@@ -87,15 +92,12 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        // Validación específica para Spinners (¡NUEVO!)
+        // Validación específica para Spinners
         if (objetivo == "Selecciona tu Objetivo") {
             Toast.makeText(this, "Por favor, selecciona tu objetivo.", Toast.LENGTH_SHORT).show()
             Log.d("LoginActivity", "Validación: Objetivo no seleccionado.")
             return
         }
-        // Para nivel, la primera opción es "Todos los Niveles" en el array, que no es válida para registro.
-        // Si el array de niveles_rutina_array tiene "Todos los Niveles" como primer item,
-        // el usuario debe seleccionar un nivel real.
         if (nivelExperiencia == "Todos los Niveles") {
             Toast.makeText(this, "Por favor, selecciona tu nivel de experiencia.", Toast.LENGTH_SHORT).show()
             Log.d("LoginActivity", "Validación: Nivel de experiencia no seleccionado.")
@@ -156,31 +158,36 @@ class LoginActivity : AppCompatActivity() {
                             "edad" to edad,
                             "peso" to peso,
                             "altura" to altura,
-                            "objetivo" to objetivo, // Valor del Spinner
-                            "nivelExperiencia" to nivelExperiencia // Valor del Spinner
+                            "objetivo" to objetivo,
+                            "nivelExperiencia" to nivelExperiencia
                         )
 
                         db.collection("usuarios")
                             .document(uid)
                             .set(userProfile)
                             .addOnSuccessListener {
-                                Toast.makeText(this, "Registro exitoso. ¡Bienvenido!", Toast.LENGTH_LONG).show()
-                                Log.d("LoginActivity", "Perfil guardado en Firestore. Redirigiendo a WelcomeActivity...")
-                                val intent = Intent(this, WelcomeActivity::class.java)
+                                Toast.makeText(this, "Registro exitoso. Continuemos con las restricciones de salud.", Toast.LENGTH_LONG).show()
+                                Log.d("LoginActivity", "Perfil guardado en Firestore. Redirigiendo a HealthRestrictionsActivity...")
+                                // --- CAMBIO CRÍTICO AQUÍ: Lanza HealthRestrictionsActivity ---
+                                val intent = Intent(this, HealthRestrictionsActivity::class.java)
                                 startActivity(intent)
-                                finish()
+                                finish() // Cierra LoginActivity para que no se pueda volver atrás
                             }
                             .addOnFailureListener { e ->
                                 Toast.makeText(this, "Registro exitoso, pero fallo al guardar perfil: ${e.message}", Toast.LENGTH_LONG).show()
-                                Log.e("LoginActivity", "Fallo al guardar perfil en Firestore. Redirigiendo a WelcomeActivity...", e)
-                                val intent = Intent(this, WelcomeActivity::class.java)
+                                Log.e("LoginActivity", "Fallo al guardar perfil en Firestore. Redirigiendo a HealthRestrictionsActivity...", e)
+                                // Aunque falle el guardado inicial, el usuario ya está registrado en Auth.
+                                // Podemos permitirle continuar con restricciones y luego arreglar el perfil.
+                                val intent = Intent(this, HealthRestrictionsActivity::class.java)
                                 startActivity(intent)
-                                finish()
+                                finish() // Cierra LoginActivity
                             }
                     } else {
                         Log.e("LoginActivity", "Registro de Auth exitoso, pero UID es nulo.", task.exception)
                         Toast.makeText(this, "Registro exitoso, pero UID de usuario no encontrado.", Toast.LENGTH_LONG).show()
-                        val intent = Intent(this, WelcomeActivity::class.java)
+                        // En este caso, si el UID es nulo, no se puede continuar con las restricciones ni el Home.
+                        // Podríamos redirigir a SignInActivity o mostrar un error más grave.
+                        val intent = Intent(this, SignInActivity::class.java) // Redirigir al inicio de sesión para un nuevo intento
                         startActivity(intent)
                         finish()
                     }

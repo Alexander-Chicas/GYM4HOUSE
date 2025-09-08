@@ -4,9 +4,11 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32"/>
+    <uses-permission
+        android:name="android.permission.SCHEDULE_EXACT_ALARM"
+        android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 
     <application
@@ -20,7 +22,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GYM4HOUSE"
         tools:targetApi="31">
-
+        <activity
+            android:name=".HealthRestrictionsActivity"
+            android:exported="false" />
         <activity
             android:name=".SignInActivity"
             android:exported="false" />
@@ -29,26 +33,27 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".LoginActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
 
         <receiver
             android:name=".ReminderBroadcastReceiver"
             android:enabled="true"
-            android:exported="true"> <intent-filter>
-            <action android:name="android.intent.action.BOOT_COMPLETED" />
-            <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-            <action android:name="com.example.gym4house.ACTION_REMINDER" />
-        </intent-filter>
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.example.gym4house.ACTION_REMINDER" />
+            </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>

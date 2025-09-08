@@ -8,17 +8,9 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.example.gym4house.data.dao.PerfilClienteDao
-import com.example.gym4house.data.dao.UsuarioDao
-import com.example.gym4house.data.entity.PerfilCliente
-import com.example.gym4house.data.entity.Usuario
 import com.example.gym4house.databinding.FragmentPerfilBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class PerfilFragment : Fragment() {
 
@@ -27,8 +19,8 @@ class PerfilFragment : Fragment() {
 
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
-    private lateinit var perfilClienteDao: PerfilClienteDao
-    private lateinit var usuarioDao: UsuarioDao
+    // Las propiedades perfilClienteDao y usuarioDao no se están utilizando y se han eliminado para simplificar.
+    // Si necesitas Room en este fragmento, asegúrate de inicializarlas y usarlas.
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,7 +35,7 @@ class PerfilFragment : Fragment() {
 
         firebaseAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
-        // Inicializar DAOs (asume que ya tienes una base de datos Room configurada)
+        // Las DAOs relacionadas con Room se han comentado/eliminado ya que no se estaban usando.
         // perfilClienteDao = AppDatabase.getDatabase(requireContext()).perfilClienteDao()
         // usuarioDao = AppDatabase.getDatabase(requireContext()).usuarioDao()
 
@@ -126,17 +118,24 @@ class PerfilFragment : Fragment() {
         }
 
         binding.buttonCambiarPassword.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, ChangePasswordFragment())
-                .addToBackStack(null)
-                .commit()
+            // Se mantiene la lógica de reemplazar fragmento si ChangePasswordFragment es un fragmento
+            // dentro de MainActivity. Si fuera una Activity, lanzarías un Intent.
+            (activity as? MainActivity)?.replaceFragment(ChangePasswordFragment())
         }
 
         binding.buttonConfigurarRecordatorios.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, RemindersSettingsFragment())
-                .addToBackStack(null)
-                .commit()
+            // Se mantiene la lógica de reemplazar fragmento si RemindersSettingsFragment es un fragmento
+            // dentro de MainActivity. Si fuera una Activity, lanzarías un Intent.
+            (activity as? MainActivity)?.replaceFragment(RemindersSettingsFragment())
+        }
+
+        binding.buttonGestionarRestricciones.setOnClickListener {
+            // *** ESTE ES EL CAMBIO CRÍTICO: Lanzar HealthRestrictionsActivity con un Intent ***
+            val intent = Intent(requireContext(), HealthRestrictionsActivity::class.java)
+            // No necesitamos enviar LAUNCH_MODE_EXTRA explícitamente a MODE_EDIT_PROFILE
+            // porque es el valor por defecto en HealthRestrictionsActivity cuando no se especifica.
+            startActivity(intent)
+            Toast.makeText(requireContext(), "Gestionar Restricciones de Salud", Toast.LENGTH_SHORT).show()
         }
 
         binding.buttonCerrarSesion.setOnClickListener {
@@ -163,7 +162,7 @@ class PerfilFragment : Fragment() {
             )
 
             firestore.collection("usuarios").document(userId)
-                .update(userProfile as Map<String, Any>) // Cast for Firebase
+                .update(userProfile as Map<String, Any>)
                 .addOnSuccessListener {
                     Toast.makeText(requireContext(), "Perfil actualizado correctamente.", Toast.LENGTH_SHORT).show()
                 }
