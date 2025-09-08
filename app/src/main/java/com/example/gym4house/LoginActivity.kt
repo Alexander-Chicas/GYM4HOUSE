@@ -170,6 +170,8 @@ class LoginActivity : AppCompatActivity() {
                                 Log.d("LoginActivity", "Perfil guardado en Firestore. Redirigiendo a HealthRestrictionsActivity...")
                                 // --- CAMBIO CRÍTICO AQUÍ: Lanza HealthRestrictionsActivity ---
                                 val intent = Intent(this, HealthRestrictionsActivity::class.java)
+                                // *** AÑADIMOS EL EXTRA PARA INDICAR EL MODO DE REGISTRO ***
+                                intent.putExtra(HealthRestrictionsActivity.LAUNCH_MODE_EXTRA, HealthRestrictionsActivity.MODE_REGISTER)
                                 startActivity(intent)
                                 finish() // Cierra LoginActivity para que no se pueda volver atrás
                             }
@@ -179,6 +181,8 @@ class LoginActivity : AppCompatActivity() {
                                 // Aunque falle el guardado inicial, el usuario ya está registrado en Auth.
                                 // Podemos permitirle continuar con restricciones y luego arreglar el perfil.
                                 val intent = Intent(this, HealthRestrictionsActivity::class.java)
+                                // *** AÑADIMOS EL EXTRA PARA INDICAR EL MODO DE REGISTRO (incluso si falla el perfil) ***
+                                intent.putExtra(HealthRestrictionsActivity.LAUNCH_MODE_EXTRA, HealthRestrictionsActivity.MODE_REGISTER)
                                 startActivity(intent)
                                 finish() // Cierra LoginActivity
                             }

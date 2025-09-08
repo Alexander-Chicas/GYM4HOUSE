@@ -102,10 +102,10 @@ class HealthRestrictionsFragment : Fragment() {
         // Restricciones Físicas
         checkBoxDolorRodilla = binding.checkBoxDolorRodilla
         checkBoxDolorEspalda = binding.checkBoxDolorEspalda
-        checkBoxLesionMuscular = binding.checkBoxLesionMuscular
+        checkBoxLesionMuscular = binding.checkBoxLesionMusDificil // Corregido: ID del XML
         checkBoxOtraRestriccion = binding.checkBoxOtraRestriccion
         editTextOtraRestriccion = binding.editTextOtraRestriccion
-        checkBoxNingunaRestriccion = binding.checkBoxNingunaAlergia
+        checkBoxNingunaRestriccion = binding.checkBoxNingunaRestriccion // Corregido: ID del XML
 
         // Notas Médicas
         editTextNotasMedicas = binding.editTextNotasMedicas
@@ -221,18 +221,21 @@ class HealthRestrictionsFragment : Fragment() {
     }
 
     private fun loadHealthRestrictions() {
+        Log.d("HealthRestrictionsFragment", "loadHealthRestrictions - Iniciando carga.") // LOG
         progressBar.visibility = View.VISIBLE
         val userId = auth.currentUser?.uid
 
         if (userId == null) {
             Snackbar.make(binding.root, "Usuario no autenticado", Snackbar.LENGTH_SHORT).show()
             progressBar.visibility = View.GONE
+            Log.e("HealthRestrictionsFragment", "loadHealthRestrictions - Usuario no autenticado, abortando.") // LOG
             return
         }
 
         firestore.collection("usuarios").document(userId)
             .get()
             .addOnSuccessListener { document ->
+                Log.d("HealthRestrictionsFragment", "loadHealthRestrictions - Carga de Firestore exitosa. Documento existe: ${document.exists()}") // LOG
                 progressBar.visibility = View.GONE
                 if (document.exists()) {
                     val restriccionesSalud = document.get("restriccionesSalud") as? Map<String, Any>
@@ -267,6 +270,7 @@ class HealthRestrictionsFragment : Fragment() {
                         restriccionesFisicas?.let { rf ->
                             checkBoxDolorRodilla.isChecked = rf["dolorRodilla"] as? Boolean ?: false
                             checkBoxDolorEspalda.isChecked = rf["dolorEspalda"] as? Boolean ?: false
+                            // Se corrige el ID del checkbox
                             checkBoxLesionMuscular.isChecked = rf["lesionMuscular"] as? Boolean ?: false
                             checkBoxOtraRestriccion.isChecked = rf["otraRestriccion"] as? Boolean ?: false
                             editTextOtraRestriccion.setText(rf["otraRestriccionTexto"] as? String ?: "")
@@ -281,23 +285,27 @@ class HealthRestrictionsFragment : Fragment() {
                     }
                 } else {
                     // Si no existen restricciones previas, asegura el estado UI por defecto
+                    Log.d("HealthRestrictionsFragment", "loadHealthRestrictions - No existen restricciones previas, aplicando estado UI por defecto.") // LOG
                     applyInitialUiStateBasedOnLoadedData()
                 }
             }
             .addOnFailureListener { exception ->
                 progressBar.visibility = View.GONE
                 Snackbar.make(binding.root, "Error al cargar restricciones: ${exception.message}", Snackbar.LENGTH_SHORT).show()
-                Log.e("HealthRestrictions", "Error loading health restrictions", exception)
+                Log.e("HealthRestrictionsFragment", "loadHealthRestrictions - Error al cargar restricciones: ${exception.message}", exception) // LOG de error
                 applyInitialUiStateBasedOnLoadedData() // Asegurar estado UI incluso con error de carga
             }
+        Log.d("HealthRestrictionsFragment", "loadHealthRestrictions - Solicitud de Firestore enviada.") // LOG
+
     }
 
     // Función para aplicar el estado UI inicial basado en datos cargados o por defecto
     private fun applyInitialUiStateBasedOnLoadedData() {
         val alergiaCheckBoxes = listOf(checkBoxGluten, checkBoxLactosa, checkBoxNueces, checkBoxMariscos, checkBoxOtraAlergia)
         if (checkBoxNingunaAlergia.isChecked) {
-            alergiaCheckBoxes.forEach { it.isEnabled = false }
+            alergiaCheckBoxes.forEach { it.isChecked = false; it.isEnabled = false }
             editTextOtraAlergia.isEnabled = false
+            editTextOtraAlergia.text.clear()
         } else {
             alergiaCheckBoxes.forEach { it.isEnabled = true }
             editTextOtraAlergia.isEnabled = checkBoxOtraAlergia.isChecked
@@ -305,8 +313,9 @@ class HealthRestrictionsFragment : Fragment() {
 
         val condicionCheckBoxes = listOf(checkBoxHipertension, checkBoxDiabetes, checkBoxAsma, checkBoxProblemasCardiacos, checkBoxOtraCondicion)
         if (checkBoxNingunaCondicion.isChecked) {
-            condicionCheckBoxes.forEach { it.isEnabled = false }
+            condicionCheckBoxes.forEach { it.isChecked = false; it.isEnabled = false }
             editTextOtraCondicion.isEnabled = false
+            editTextOtraCondicion.text.clear()
         } else {
             condicionCheckBoxes.forEach { it.isEnabled = true }
             editTextOtraCondicion.isEnabled = checkBoxOtraCondicion.isChecked
@@ -314,8 +323,9 @@ class HealthRestrictionsFragment : Fragment() {
 
         val restriccionCheckBoxes = listOf(checkBoxDolorRodilla, checkBoxDolorEspalda, checkBoxLesionMuscular, checkBoxOtraRestriccion)
         if (checkBoxNingunaRestriccion.isChecked) {
-            restriccionCheckBoxes.forEach { it.isEnabled = false }
+            restriccionCheckBoxes.forEach { it.isChecked = false; it.isEnabled = false }
             editTextOtraRestriccion.isEnabled = false
+            editTextOtraRestriccion.text.clear()
         } else {
             restriccionCheckBoxes.forEach { it.isEnabled = true }
             editTextOtraRestriccion.isEnabled = checkBoxOtraRestriccion.isChecked
@@ -323,6 +333,7 @@ class HealthRestrictionsFragment : Fragment() {
     }
 
     private fun saveHealthRestrictions() {
+        Log.d("HealthRestrictionsFragment", "saveHealthRestrictions - Iniciando el proceso de guardado.") // LOG
         // Añadir validación antes de guardar
         if (!validateHealthRestrictions()) {
             Snackbar.make(binding.root, "Por favor, selecciona una opción en cada categoría (o 'Ninguna').", Snackbar.LENGTH_LONG).show()
@@ -336,7 +347,7 @@ class HealthRestrictionsFragment : Fragment() {
         if (userId == null) {
             Snackbar.make(binding.root, "Usuario no autenticado", Snackbar.LENGTH_SHORT).show()
             progressBar.visibility = View.GONE
-            Log.e("HealthRestrictionsFragment", "saveHealthRestrictions - Usuario no autenticado.") // LOG
+            Log.e("HealthRestrictionsFragment", "saveHealthRestrictions - Usuario no autenticado, abortando.") // LOG
             return
         }
 
@@ -383,14 +394,15 @@ class HealthRestrictionsFragment : Fragment() {
             .addOnSuccessListener {
                 progressBar.visibility = View.GONE
                 Snackbar.make(binding.root, "Restricciones de salud guardadas correctamente.", Snackbar.LENGTH_SHORT).show()
-                Log.d("HealthRestrictionsFragment", "saveHealthRestrictions - Datos guardados exitosamente.") // LOG
+                Log.d("HealthRestrictionsFragment", "saveHealthRestrictions - Datos guardados exitosamente. Navegando a la siguiente pantalla.") // LOG
                 navigateToNextScreen()
             }
-            .addOnFailureListener { exception ->
+            .addOnFailureListener {
                 progressBar.visibility = View.GONE
-                Snackbar.make(binding.root, "Error al guardar restricciones: ${exception.message}", Snackbar.LENGTH_LONG).show()
-                Log.e("HealthRestrictions", "Error saving health restrictions to Firestore", exception) // LOG de error
+                Snackbar.make(binding.root, "Error al guardar restricciones.", Snackbar.LENGTH_LONG).show()
+                Log.e("HealthRestrictionsFragment", "saveHealthRestrictions - Error al guardar restricciones en Firestore.") // LOG de error
             }
+        Log.d("HealthRestrictionsFragment", "saveHealthRestrictions - Solicitud de guardado de Firestore enviada.") // LOG
     }
 
     // Función de validación
@@ -439,17 +451,17 @@ class HealthRestrictionsFragment : Fragment() {
 
     private fun setupButtonListeners() {
         binding.buttonGuardar.setOnClickListener {
-            Log.d("HealthRestrictionsFragment", "Botón Guardar clicado.") // LOG
+            Log.d("HealthRestrictionsFragment", "setupButtonListeners - Botón Guardar clicado. Llamando a saveHealthRestrictions().") // LOG
             saveHealthRestrictions()
         }
 
         binding.buttonOmitir.setOnClickListener {
+            Log.d("HealthRestrictionsFragment", "setupButtonListeners - Botón Omitir clicado. Marcando 'Ninguna' y guardando.") // LOG
             Snackbar.make(binding.root, "Restricciones omitidas por ahora.", Snackbar.LENGTH_SHORT).show()
-            Log.d("HealthRestrictionsFragment", "Botón Omitir clicado. Marcando 'Ninguna' por defecto.") // LOG
             // Al omitir, marcamos las opciones "Ninguna" por defecto y guardamos.
             checkBoxNingunaAlergia.isChecked = true
             checkBoxNingunaCondicion.isChecked = true
-            checkBoxNingunaRestriccion.isChecked = true
+            checkBoxNingunaRestriccion.isChecked = true // Asegurarse de que el nuevo checkbox también se marca
             // Importante: llamar a applyInitialUiStateBasedOnLoadedData() para reflejar el cambio en la UI
             applyInitialUiStateBasedOnLoadedData()
             saveHealthRestrictions() // Esto guardará el estado de "Ninguna" en todas las categorías
@@ -458,10 +470,12 @@ class HealthRestrictionsFragment : Fragment() {
 
     private fun navigateToNextScreen() {
         if (launchMode == HealthRestrictionsActivity.MODE_REGISTER) {
-            Log.d("HealthRestrictionsFragment", "navigateToNextScreen - Navegando a WelcomeActivity (flujo de registro).") // LOG
-            val intent = Intent(requireActivity(), WelcomeActivity::class.java)
+            // CAMBIO: Navegar a la nueva EquipmentActivity
+            Log.d("HealthRestrictionsFragment", "navigateToNextScreen - Navegando a EquipmentActivity (flujo de registro).")
+            val intent = Intent(requireActivity(), EquipmentActivity::class.java)
+            intent.putExtra(EquipmentActivity.LAUNCH_MODE_EXTRA, EquipmentActivity.MODE_REGISTER)
             startActivity(intent)
-            requireActivity().finish() // Cierra HealthRestrictionsActivity
+            requireActivity().finish()
         } else {
             // Si es modo de edición, simplemente cerramos esta Activity para volver a la anterior.
             Log.d("HealthRestrictionsFragment", "navigateToNextScreen - Finalizando HealthRestrictionsActivity (flujo de edición, regresa a la actividad que la lanzó).") // LOG

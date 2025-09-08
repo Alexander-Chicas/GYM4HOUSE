@@ -149,45 +149,45 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
                     android:text="Objetivos y Preferencias"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                    android:layout_marginBottom="16dp"/>
+                    android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
 
                 <TextView
+                    style="@style/TextAppearance.Material3.BodyMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Nivel de Experiencia"
                     android:labelFor="@id/spinnerPerfilNivelExperiencia"
-                    style="@style/TextAppearance.Material3.BodyMedium"
-                    android:textColor="?android:attr/textColorSecondary"/>
+                    android:text="Nivel de Experiencia"
+                    android:textColor="?android:attr/textColorSecondary" />
 
                 <Spinner
                     android:id="@+id/spinnerPerfilNivelExperiencia"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:layout_marginBottom="8dp"/>
+                    android:layout_marginBottom="8dp" />
 
                 <TextView
+                    style="@style/TextAppearance.Material3.BodyMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Mi Objetivo Principal"
                     android:labelFor="@id/spinnerPerfilObjetivo"
-                    style="@style/TextAppearance.Material3.BodyMedium"
-                    android:textColor="?android:attr/textColorSecondary"/>
+                    android:text="Mi Objetivo Principal"
+                    android:textColor="?android:attr/textColorSecondary" />
 
                 <Spinner
                     android:id="@+id/spinnerPerfilObjetivo"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:layout_marginBottom="8dp"/>
+                    android:layout_marginBottom="8dp" />
 
                 <TextView
+                    style="@style/TextAppearance.Material3.BodyMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tipo de Ejercicio Preferido"
                     android:labelFor="@id/spinnerPerfilTipoEjercicios"
-                    style="@style/TextAppearance.Material3.BodyMedium"
-                    android:textColor="?android:attr/textColorSecondary"/>
+                    android:text="Tipo de Ejercicio Preferido"
+                    android:textColor="?android:attr/textColorSecondary" />
 
                 <Spinner
                     android:id="@+id/spinnerPerfilTipoEjercicios"
@@ -253,6 +253,17 @@
                     android:text="Gestionar Restricciones de Salud"
                     android:textSize="16sp"
                     app:icon="@drawable/ic_edit_24dp"
+                    app:strokeColor="@color/gym_brown_primary" />
+
+                <Button
+                    android:id="@+id/buttonEditarEquipamiento"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Editar Equipamiento"
+                    android:textSize="16sp"
+                    app:icon="@drawable/ic_dumbbell"
                     app:strokeColor="@color/gym_brown_primary" />
 
                 <Button

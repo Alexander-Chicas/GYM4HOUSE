@@ -56,4 +56,10 @@
         <item>Mantener Forma</item>
         <item>Aumentar Fuerza</item>
     </string-array>
+    <!-- Add these lines for the notification channel -->
+    <string name="channel_name">Daily Reminder</string>
+    <string name="channel_description">Notifications for daily workout reminders</string>
+
+
+    <!-- <string name="app_name">GYM4HOUSE</string> -->
 </resources>

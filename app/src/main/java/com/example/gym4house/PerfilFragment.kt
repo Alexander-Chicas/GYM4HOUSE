@@ -138,6 +138,13 @@ class PerfilFragment : Fragment() {
             Toast.makeText(requireContext(), "Gestionar Restricciones de Salud", Toast.LENGTH_SHORT).show()
         }
 
+        // BOTÓN NUEVO: "Editar Equipamiento"
+        binding.buttonEditarEquipamiento.setOnClickListener {
+            val intent = Intent(requireContext(), EquipmentActivity::class.java)
+            intent.putExtra(EquipmentActivity.LAUNCH_MODE_EXTRA, EquipmentActivity.MODE_EDIT_PROFILE)
+            startActivity(intent)
+        }
+
         binding.buttonCerrarSesion.setOnClickListener {
             firebaseAuth.signOut()
             val intent = Intent(activity, WelcomeActivity::class.java)
