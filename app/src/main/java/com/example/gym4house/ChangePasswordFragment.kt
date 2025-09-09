@@ -1,13 +1,12 @@
 package com.example.gym4house
 
 import android.os.Bundle
-import android.util.Log // Importa Log
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.example.gym4house.databinding.FragmentChangePasswordBinding
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -31,8 +30,10 @@ class ChangePasswordFragment : Fragment() {
 
         auth = FirebaseAuth.getInstance()
 
+        // Botón de atrás del toolbar
         binding.toolbarChangePassword.setNavigationOnClickListener {
-            findNavController().navigateUp()
+            // Volver a PerfilFragment usando MainActivity
+            (activity as? MainActivity)?.replaceFragment(PerfilFragment(), addToBackStack = false)
         }
 
         binding.buttonChangePassword.setOnClickListener {
@@ -69,7 +70,8 @@ class ChangePasswordFragment : Fragment() {
                                     if (updateTask.isSuccessful) {
                                         Log.d("ChangePassword", "Contraseña actualizada exitosamente en Firebase.")
                                         Toast.makeText(requireContext(), "Contraseña cambiada exitosamente", Toast.LENGTH_SHORT).show()
-                                        findNavController().navigateUp()
+                                        // Volver a PerfilFragment sin crash
+                                        (activity as? MainActivity)?.replaceFragment(PerfilFragment(), addToBackStack = false)
                                     } else {
                                         Log.e("ChangePassword", "Error al actualizar contraseña: ${updateTask.exception?.message}", updateTask.exception)
                                         Toast.makeText(requireContext(), "Error al cambiar la contraseña: ${updateTask.exception?.message}", Toast.LENGTH_LONG).show()

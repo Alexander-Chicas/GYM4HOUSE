@@ -15,5 +15,12 @@
         <color name="text_dark_gray">#616161</color>
         <color name="cream_background">#FFF7E6</color>
         <color name="md_theme_error">#B00020</color> <!-- Standard Material Design Red for errors -->
-
+        <color name="purple_200">#FFBB86FC</color>
+        <color name="purple_500">#FF6200EE</color>
+        <color name="purple_700">#FF3700B3</color>
+        <color name="black_workout_bg">#121212</color>
+        <color name="accent_neon_green">#39FF14</color>
+        <color name="gray_light">#BDBDBD</color>
+        <color name="gray_dark">#424242</color>
+        <color name="red_finish">#D32F2F</color>
 </resources>

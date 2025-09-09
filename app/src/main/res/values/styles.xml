@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="GymButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <!-- Borde del botón -->
+        <item name="strokeColor">@color/gym_brown_primary</item>
+        <item name="strokeWidth">2dp</item>
+
+        <!-- Texto -->
+        <item name="android:textColor">@color/gym_brown_primary</item>
+        <item name="android:textSize">16sp</item>
+
+        <!-- Fondo transparente -->
+        <item name="backgroundTint">@android:color/transparent</item>
+
+        <!-- Padding para que se vea más grande -->
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+    </style>
+
+</resources>

@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
+        <!-- Card Datos Personales -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_datos_personales"
             android:layout_width="0dp"
@@ -128,6 +129,7 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Card Objetivos -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_objetivos"
             android:layout_width="0dp"
@@ -154,7 +156,6 @@
                     android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
 
                 <TextView
-                    style="@style/TextAppearance.Material3.BodyMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:labelFor="@id/spinnerPerfilNivelExperiencia"
@@ -168,7 +169,6 @@
                     android:layout_marginBottom="8dp" />
 
                 <TextView
-                    style="@style/TextAppearance.Material3.BodyMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:labelFor="@id/spinnerPerfilObjetivo"
@@ -182,7 +182,6 @@
                     android:layout_marginBottom="8dp" />
 
                 <TextView
-                    style="@style/TextAppearance.Material3.BodyMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:labelFor="@id/spinnerPerfilTipoEjercicios"
@@ -194,9 +193,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:labelFor="@id/spinnerPerfilNivelActividadFisica"
+                    android:text="Nivel de Actividad Física"
+                    android:textColor="?android:attr/textColorSecondary" />
+
+                <Spinner
+                    android:id="@+id/spinnerPerfilNivelActividadFisica"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="8dp" />
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Card Cuenta -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_cuenta"
             android:layout_width="0dp"
@@ -224,67 +238,71 @@
 
                 <Button
                     android:id="@+id/buttonCambiarPassword"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    style="@style/GymButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Cambiar Contraseña"
-                    android:textSize="16sp"
                     app:icon="@drawable/ic_lock"
-                    app:strokeColor="@color/gym_brown_primary" />
+                    android:textSize="16sp"/>
 
                 <Button
                     android:id="@+id/buttonConfigurarRecordatorios"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    style="@style/GymButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Configurar Recordatorios"
-                    android:textSize="16sp"
                     app:icon="@drawable/ic_notifications"
-                    app:strokeColor="@color/gym_brown_primary" />
+                    android:textSize="16sp"/>
 
-                <!-- Nuevo botón para gestionar restricciones de salud -->
                 <Button
                     android:id="@+id/buttonGestionarRestricciones"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    style="@style/GymButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Gestionar Restricciones de Salud"
-                    android:textSize="16sp"
                     app:icon="@drawable/ic_edit_24dp"
-                    app:strokeColor="@color/gym_brown_primary" />
+                    android:textSize="16sp"/>
 
                 <Button
                     android:id="@+id/buttonEditarEquipamiento"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    style="@style/GymButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Editar Equipamiento"
-                    android:textSize="16sp"
                     app:icon="@drawable/ic_dumbbell"
-                    app:strokeColor="@color/gym_brown_primary" />
+                    android:textSize="16sp"/>
 
                 <Button
                     android:id="@+id/buttonCerrarSesion"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    style="@style/GymButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Cerrar Sesión"
-                    android:textSize="16sp"
                     app:icon="@drawable/ic_logout"
                     app:iconSize="20dp"
                     app:iconTint="@color/md_theme_error"
                     android:textColor="@color/md_theme_error"
-                    app:strokeColor="@color/gym_brown_primary" />
+                    android:textSize="16sp"/>
 
+                <!-- Switch de Modo Oscuro al final -->
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchDarkMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Modo Oscuro"
+                    android:textSize="16sp"
+                    android:layout_marginTop="16dp"/>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Botón Guardar Cambios -->
         <Button
             android:id="@+id/buttonGuardarCambios"
+            style="@style/GymButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Guardar Cambios"
@@ -293,7 +311,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="16dp"
+            android:textSize="16sp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

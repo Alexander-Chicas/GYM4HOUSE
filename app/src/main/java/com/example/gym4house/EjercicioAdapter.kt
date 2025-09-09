@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.parcelize.RawValue
 
 class EjercicioAdapter(private val ejercicios: List<Ejercicio>) :
     RecyclerView.Adapter<EjercicioAdapter.EjercicioViewHolder>() {
@@ -26,11 +25,20 @@ class EjercicioAdapter(private val ejercicios: List<Ejercicio>) :
     override fun onBindViewHolder(holder: EjercicioViewHolder, position: Int) {
         val ejercicio = ejercicios[position]
 
-        // Ahora puedes acceder a las propiedades directamente desde el objeto 'Ejercicio'
+        // Mostrar los datos básicos
         holder.nombreEjercicio.text = ejercicio.nombreEjercicio
         holder.series.text = "Series: ${ejercicio.series}"
         holder.repeticiones.text = "Repeticiones: ${ejercicio.repeticiones}"
         holder.descanso.text = "Descanso: ${ejercicio.descansoSegundos} segundos"
+
+        // 🔹 Al tocar un ejercicio, abre el detalle con video/GIF
+        holder.itemView.setOnClickListener {
+            val context = holder.itemView.context
+            if (context is MainActivity) {
+                val fragment = ExerciseDetailFragment.newInstance(ejercicio)
+                context.replaceFragment(fragment)
+            }
+        }
     }
 
     override fun getItemCount(): Int {

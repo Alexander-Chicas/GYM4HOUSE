@@ -47,38 +47,43 @@ android {
 }
 
 dependencies {
-    // Firebase (BOM para gestionar versiones)
-    implementation(platform("com.google.firebase:firebase-bom:32.8.1")) // O la versión que tengas
-    // Asegúrate que la versión del BOM sea la que necesitas, a veces con Version Catalogs se maneja diferente.
+    // 1. Firebase (BOM: define todas las versiones de Firebase)
+    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
+
+    // 2. Dependencias de Android y Jetpack
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+
+    // 3. Dependencias de Firebase (SIN VERSIONES ESPECÍFICAS)
     implementation(libs.firebase.auth.ktx)
-    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.firestore.ktx) // Ya estaba aquí
+    implementation("com.google.firebase:firebase-storage-ktx") // ¡SIN VERSIÓN!
 
     // Dependencias de Room añadidas
-    val room_version = "2.6.1" // Asegúrate de que esta sea la versión que deseas
+    val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
     ksp("androidx.room:room-compiler:$room_version")
-    implementation("androidx.room:room-ktx:$room_version") // Para usar Coroutines con Room
+    implementation("androidx.room:room-ktx:$room_version")
 
-    // Fragment (si no lo tienes ya para Kotlin o Java)
+    // Fragment, Coroutines, Lifecycle, etc.
     implementation ("androidx.fragment:fragment-ktx:1.6.0")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.8.0") // Para lifecycleScope
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.8.0")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.0")
+
+    // Glide y MPAndroidChart
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
     // Navigation Component
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
 
-    // MPAndroidChart para gráficos
-    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
-
+    // Test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

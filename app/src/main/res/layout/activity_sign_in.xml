@@ -25,7 +25,7 @@
         android:text="@string/sign_in_title"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="@android:color/black"
+        android:textColor="@color/gym_brown_primary"
         android:layout_marginBottom="32dp"/>
 
     <EditText

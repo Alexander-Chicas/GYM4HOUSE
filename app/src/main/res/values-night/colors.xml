@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FFFFFFFF</color> <!-- texto principal claro -->
+    <color name="white">#FF000000</color> <!-- invertido si lo necesitas -->
+
+    <color name="gym_brown_primary">#A0522D</color>
+    <color name="gym_brown_variant">#8B4513</color>
+    <color name="gym_edit_text">#2C2C2C</color> <!-- fondo de tarjetas/inputs oscuro -->
+    <color name="google_red">#DB4437</color>
+    <color name="light_gray_background">#1E1E1E</color>
+    <color name="header_background">#121212</color>
+    <color name="text_dark_gray">#E0E0E0</color>
+    <color name="cream_background">#121212</color> <!-- fondo general oscuro -->
+    <color name="md_theme_error">#CF6679</color>
+</resources>

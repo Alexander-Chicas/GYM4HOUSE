@@ -29,6 +29,7 @@ class RecommendationsFragment : Fragment(), RutinaAdapter.OnRoutineActionListene
     private var preferredExerciseType: String? = null
     private var userEquipmentList: List<String>? = null
     private var healthRestrictions: Map<String, Any>? = null
+    private var userActivityLevel: String? = null // NUEVO: Nivel de actividad física
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +54,7 @@ class RecommendationsFragment : Fragment(), RutinaAdapter.OnRoutineActionListene
 
     override fun onResume() {
         super.onResume()
-        fetchUserProfile() // Se carga el perfil completo al entrar al fragmento
+        fetchUserProfile()
     }
 
     private fun fetchUserProfile() {
@@ -73,8 +74,8 @@ class RecommendationsFragment : Fragment(), RutinaAdapter.OnRoutineActionListene
                     userLevel = document.getString("nivelExperiencia")
                     preferredExerciseType = document.getString("tipo_ejercicio_preferido")
                     healthRestrictions = document.get("restriccionesSalud") as? Map<String, Any>
+                    userActivityLevel = document.getString("nivelActividadFisica") // NUEVO
 
-                    // OJO AQUÍ: Solo se obtienen los documentos donde 'estaSeleccionado' es true
                     firestore.collection("usuarios").document(userId).collection("equipamiento")
                         .whereEqualTo("estaSeleccionado", true)
                         .get()
@@ -94,7 +95,7 @@ class RecommendationsFragment : Fragment(), RutinaAdapter.OnRoutineActionListene
                 }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(context, "Error al obtener perfil de usuario: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this.context, "Error al obtener perfil de usuario: ${e.message}", Toast.LENGTH_LONG).show()
                 loadRecommendedRoutines()
             }
     }
@@ -105,32 +106,73 @@ class RecommendationsFragment : Fragment(), RutinaAdapter.OnRoutineActionListene
         var query: Query = firestore.collection("rutinas")
             .limit(30)
 
+        // 1. Filtrar por Nivel de Experiencia
         val level = userLevel ?: "Principiante"
         query = when (level) {
             "Intermedio" -> query.whereIn("nivel", listOf("Intermedio", "Avanzado"))
             "Avanzado" -> query.whereEqualTo("nivel", "Avanzado")
             else -> query.whereIn("nivel", listOf("Principiante", "Intermedio", "Todos los Niveles"))
         }
+        Log.d("RecommendationsFragment", "Filtering by level: $level")
 
+
+        // 2. Filtrar por Tipo de Ejercicio Preferido
         preferredExerciseType?.let { type ->
             if (type != "Todos los Tipos") {
-                query = query.whereEqualTo("tipo", type)
+                // Eliminamos el filtro estricto por tipo de ejercicio de la consulta de Firestore
+                // para hacer las recomendaciones menos agresivas.
+                Log.d("RecommendationsFragment", "Removing strict Firestore filter for preferred exercise type '$type' for less aggressive recommendations.")
+                // query = query.whereEqualTo("tipo", type) // Línea eliminada/comentada
+            }
+        }
+
+        // 3. Filtrar por Nivel de Actividad Física (usando niveles adyacentes)
+        userActivityLevel?.let { activityLevel ->
+            if (activityLevel != "Todos los Niveles") {
+                val adjacentActivityLevels = getAdjacentActivityLevels(activityLevel)
+                query = query.whereIn("nivelActividadFisica", adjacentActivityLevels)
+                Log.d("RecommendationsFragment", "Filtering by user activity levels: $adjacentActivityLevels (adjusted from $activityLevel)")
             }
         }
 
         query.get()
             .addOnSuccessListener { documents ->
-                val fetchedRoutines = documents.toObjects(Rutina::class.java).toMutableList()
-                Log.d("RecommendationsFragment", "Rutinas cargadas antes de filtrar: ${fetchedRoutines.size}")
+                val fetchedRoutines = documents.map { document ->
+                    val rutina = document.toObject(Rutina::class.java)
+                    rutina.id = document.id // Asignar el ID del documento
+                    rutina
+                }.toMutableList()
+                Log.d("RecommendationsFragment", "Rutinas cargadas antes de filtrar en cliente: ${fetchedRoutines.size}")
 
                 val finalRecommendations = fetchedRoutines.filter { rutina ->
-                    val hasRequiredEquipment = if (rutina.equipamiento.isNullOrEmpty() || rutina.equipamiento?.contains("Sin equipamiento") == true) {
+                    val rutinaIdForLog = rutina.nombreRutina ?: rutina.id ?: "Unknown"
+
+                    // --- FILTRADO POR EQUIPAMIENTO (menos agresivo) ---
+                    val hasRequiredEquipment = if (rutina.equipamiento.isNullOrEmpty() || (rutina.equipamiento?.size == 1 && rutina.equipamiento?.first() == "Sin equipamiento")) {
+                        Log.d("EquipmentFilter", "Routine '$rutinaIdForLog' requires no specific equipment or explicitly 'Sin equipamiento'. Compatible.")
                         true
                     } else {
-                        rutina.equipamiento.orEmpty().any { it in userEquipmentList.orEmpty() }
+                        val userEquipmentSet = userEquipmentList.orEmpty().toSet()
+                        val routineEquipmentSet = rutina.equipamiento.orEmpty().toSet()
+
+                        val userHasAnyRequiredEquipment = routineEquipmentSet.any { requiredItem ->
+                            userEquipmentSet.contains(requiredItem)
+                        }
+
+                        if (userHasAnyRequiredEquipment) {
+                            Log.d("EquipmentFilter", "Routine '$rutinaIdForLog' is compatible (user has at least one of the required equipment: $routineEquipmentSet).")
+                            true
+                        } else {
+                            Log.d("EquipmentFilter", "Discarding routine '$rutinaIdForLog' (user has none of the required equipment: $routineEquipmentSet). User equipment: $userEquipmentSet")
+                            false
+                        }
                     }
 
+                    // --- FILTRADO POR RESTRICCIONES DE SALUD ---
                     val isHealthCompatible = isRoutineHealthCompatible(rutina)
+                    if (!isHealthCompatible) {
+                        Log.d("HealthFilter", "Discarding routine '$rutinaIdForLog' due to health restrictions.")
+                    }
 
                     hasRequiredEquipment && isHealthCompatible
                 }
@@ -141,29 +183,58 @@ class RecommendationsFragment : Fragment(), RutinaAdapter.OnRoutineActionListene
 
                 if (finalRecommendations.isEmpty()) {
                     Toast.makeText(context, "No hay recomendaciones que coincidan con tus preferencias y equipamiento.", Toast.LENGTH_LONG).show()
+                    Log.w("RecommendationsFragment", "No final recommendations after client-side filtering.")
+                } else {
+                    Log.d("RecommendationsFragment", "Rutinas finales después de filtrar: ${finalRecommendations.size} rutinas.")
                 }
             }
             .addOnFailureListener { exception ->
                 Toast.makeText(context, "Error al cargar recomendaciones: ${exception.message}", Toast.LENGTH_LONG).show()
+                Log.e("RecommendationsFragment", "Error loading recommendations from Firestore", exception)
             }
+    }
+
+    // Lógica para obtener niveles de actividad física adyacentes
+    private fun getAdjacentActivityLevels(userActivityLevel: String): List<String> {
+        val allLevels = listOf("Sedentario", "Moderado", "Activo", "Muy Activo")
+        val userLevelIndex = allLevels.indexOf(userActivityLevel)
+
+        val adjacentLevels = mutableListOf<String>()
+        if (userLevelIndex != -1) {
+            // Nivel del usuario
+            adjacentLevels.add(userActivityLevel)
+
+            // Nivel inferior (si existe)
+            if (userLevelIndex > 0) {
+                adjacentLevels.add(allLevels[userLevelIndex - 1])
+            }
+            // Nivel superior (si existe)
+            if (userLevelIndex < allLevels.size - 1) {
+                adjacentLevels.add(allLevels[userLevelIndex + 1])
+            }
+        }
+        return adjacentLevels.distinct() // Eliminar duplicados y asegurar orden
     }
 
     private fun isRoutineHealthCompatible(rutina: Rutina): Boolean {
         if (healthRestrictions == null) return true
 
+        val rutinaIdForLog = rutina.nombreRutina ?: rutina.id ?: "Unknown"
+
         val hasKneePain = (healthRestrictions?.get("restriccionesFisicas") as? Map<String, Any>)?.get("dolorRodilla") as? Boolean ?: false
         if (hasKneePain) {
-            val hasHighImpactExercises = rutina.ejercicios?.any {
-                it.nombreEjercicio?.contains("salto", ignoreCase = true) == true ||
-                        it.nombreEjercicio?.contains("burpees", ignoreCase = true) == true ||
-                        it.nombreEjercicio?.contains("zancada", ignoreCase = true) == true
+            val hasHighImpactExercises = rutina.ejercicios?.any { ejercicio ->
+                ejercicio.nombreEjercicio?.contains("salto", ignoreCase = true) == true ||
+                        ejercicio.nombreEjercicio?.contains("burpees", ignoreCase = true) == true ||
+                        ejercicio.nombreEjercicio?.contains("zancada", ignoreCase = true) == true
             } ?: false
             if (hasHighImpactExercises) {
-                Log.d("HealthFilter", "Descartando rutina '${rutina.nombreRutina}' por dolor de rodilla.")
+                Log.d("HealthFilter", "Descartando rutina '${rutina.nombreRutina}' por dolor de rodilla (contiene ejercicios de alto impacto).")
                 return false
             }
         }
 
+        // Puedes agregar más lógica de filtrado aquí para otras condiciones...
         return true
     }
 

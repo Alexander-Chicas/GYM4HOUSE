@@ -155,7 +155,7 @@
             android:entries="@array/niveles_rutina_array"
             android:background="@drawable/rounded_edittext_background" android:padding="12dp" />
 
-        <!-- Nuevo Spinner para Tipo de Ejercicio Preferido -->
+        <!-- Spinner para Tipo de Ejercicio Preferido -->
         <Spinner
             android:id="@+id/spinnerTipoEjercicioPreferido"
             android:layout_width="match_parent"
@@ -163,6 +163,17 @@
             android:layout_marginTop="16dp"
             android:minHeight="48dp"
             android:entries="@array/exercise_type_options"
+            android:background="@drawable/rounded_edittext_background"
+            android:padding="12dp" />
+
+        <!-- Nuevo Spinner para Nivel de Actividad Física (US-22) -->
+        <Spinner
+            android:id="@+id/spinnerNivelActividadFisica"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:minHeight="48dp"
+            android:entries="@array/activity_level_options"
             android:background="@drawable/rounded_edittext_background"
             android:padding="12dp" />
 

@@ -20,11 +20,17 @@
         android:background="@color/gym_edit_text"
         android:icon="@android:drawable/ic_menu_week"
         android:title="Progreso" />
-
+    <item
+        android:id="@+id/navigation_recetas"
+        android:background="@color/gym_edit_text"
+        android:icon="@android:drawable/ic_menu_gallery"
+        android:title="Recetas" />
     <item
         android:id="@+id/navigation_perfil"
         android:background="@color/gym_edit_text"
         android:icon="@android:drawable/ic_menu_myplaces"
         android:title="Perfil" />
+
+
 
 </menu>
