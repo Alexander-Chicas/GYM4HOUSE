@@ -13,7 +13,8 @@ data class Rutina(
     val duracionMinutos: Long = 0,
     val tipo: String = "",
     // ¡Aquí está el cambio clave!
-    val ejercicios: List<Ejercicio> = emptyList()
+    val ejercicios: List<Ejercicio> = emptyList(),
+    val equipamiento: List<String>? = null
 ) : Parcelable {
     constructor() : this("", "", "", "", 0, "", emptyList())
 

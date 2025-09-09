@@ -84,8 +84,8 @@ class PerfilFragment : Fragment() {
                         binding.editTextPerfilAltura.setText(document.getDouble("altura")?.toString() ?: "")
                         binding.editTextPerfilPeso.setText(document.getDouble("peso")?.toString() ?: "")
 
-                        val experienceLevel = document.getString("nivel_experiencia")
-                        val goal = document.getString("objetivo_principal")
+                        val experienceLevel = document.getString("nivelExperiencia")
+                        val goal = document.getString("objetivo")
                         val exerciseType = document.getString("tipo_ejercicio_preferido")
 
                         setSelectedSpinnerItem(binding.spinnerPerfilNivelExperiencia, experienceLevel)
@@ -163,8 +163,8 @@ class PerfilFragment : Fragment() {
                 "edad" to binding.editTextPerfilEdad.text.toString().toLongOrNull(),
                 "altura" to binding.editTextPerfilAltura.text.toString().toDoubleOrNull(),
                 "peso" to binding.editTextPerfilPeso.text.toString().toDoubleOrNull(),
-                "nivel_experiencia" to binding.spinnerPerfilNivelExperiencia.selectedItem.toString(),
-                "objetivo_principal" to binding.spinnerPerfilObjetivo.selectedItem.toString(),
+                "nivelExperiencia" to binding.spinnerPerfilNivelExperiencia.selectedItem.toString(),
+                "objetivo" to binding.spinnerPerfilObjetivo.selectedItem.toString(),
                 "tipo_ejercicio_preferido" to binding.spinnerPerfilTipoEjercicios.selectedItem.toString()
             )
 

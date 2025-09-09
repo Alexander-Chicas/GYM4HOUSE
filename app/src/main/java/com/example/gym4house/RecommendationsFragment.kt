@@ -1,16 +1,20 @@
 package com.example.gym4house
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query // Importar Query para ordenar
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
 
 class RecommendationsFragment : Fragment(), RutinaAdapter.OnRoutineActionListener {
 
@@ -20,13 +24,16 @@ class RecommendationsFragment : Fragment(), RutinaAdapter.OnRoutineActionListene
     private lateinit var recommendationsAdapter: RutinaAdapter
     private val recommendedRoutinesList = mutableListOf<Rutina>()
 
-    private var userLevel: String? = null // Para almacenar el nivel del usuario
+    // Variables para almacenar los nuevos datos del usuario
+    private var userLevel: String? = null
+    private var preferredExerciseType: String? = null
+    private var userEquipmentList: List<String>? = null
+    private var healthRestrictions: Map<String, Any>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        firestore = FirebaseFirestore.getInstance()
+        firestore = Firebase.firestore
         auth = FirebaseAuth.getInstance()
-        fetchUserLevel() // Obtener el nivel del usuario al crear el fragmento
     }
 
     override fun onCreateView(
@@ -41,84 +48,99 @@ class RecommendationsFragment : Fragment(), RutinaAdapter.OnRoutineActionListene
         recommendationsAdapter = RutinaAdapter(recommendedRoutinesList, this)
         recyclerViewRecommendations.adapter = recommendationsAdapter
 
-        // Las recomendaciones se cargarán después de obtener el nivel del usuario
-        // (dentro de fetchUserLevel o en onResume para recargar si cambia el nivel)
-
         return view
     }
 
-    // Método para obtener el nivel del usuario desde Firestore
-    private fun fetchUserLevel() {
+    override fun onResume() {
+        super.onResume()
+        fetchUserProfile() // Se carga el perfil completo al entrar al fragmento
+    }
+
+    private fun fetchUserProfile() {
         val userId = auth.currentUser?.uid
         if (userId == null) {
             Toast.makeText(context, "Inicia sesión para recibir recomendaciones personalizadas.", Toast.LENGTH_SHORT).show()
             return
         }
 
+        Log.d("RecommendationsFragment", "Fetching full user profile for userId: $userId")
+
         firestore.collection("usuarios").document(userId)
             .get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
-                    // Obtenemos el nivel del usuario del campo 'nivelExperiencia'
+                    // Obtener todos los campos relevantes del usuario
                     userLevel = document.getString("nivelExperiencia")
-                    loadRecommendedRoutines() // Una vez que tenemos el nivel, cargamos las rutinas
+                    preferredExerciseType = document.getString("tipo_ejercicio_preferido")
+                    healthRestrictions = document.get("restriccionesSalud") as? Map<String, Any>
+
+                    // OJO AQUÍ: Solo se obtienen los documentos donde 'estaSeleccionado' es true
+                    firestore.collection("usuarios").document(userId).collection("equipamiento")
+                        .whereEqualTo("estaSeleccionado", true)
+                        .get()
+                        .addOnSuccessListener { equipmentSnapshot ->
+                            userEquipmentList = equipmentSnapshot.documents.mapNotNull { it.getString("nombre") }
+                            Log.d("RecommendationsFragment", "Equipo cargado de Firestore: $userEquipmentList")
+                            loadRecommendedRoutines()
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("RecommendationsFragment", "Error al obtener equipamiento: ${e.message}")
+                            loadRecommendedRoutines()
+                        }
+
                 } else {
-                    Toast.makeText(context, "No se encontró el perfil de usuario. Cargando recomendaciones generales.", Toast.LENGTH_SHORT).show()
-                    loadRecommendedRoutines() // Cargar sin nivel específico si no se encuentra
+                    Toast.makeText(context, "No se encontró el perfil. Cargando recomendaciones generales.", Toast.LENGTH_SHORT).show()
+                    loadRecommendedRoutines()
                 }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(context, "Error al obtener nivel de usuario: ${e.message}", Toast.LENGTH_LONG).show()
-                loadRecommendedRoutines() // Cargar sin nivel específico si hay un error
+                Toast.makeText(context, "Error al obtener perfil de usuario: ${e.message}", Toast.LENGTH_LONG).show()
+                loadRecommendedRoutines()
             }
     }
 
-    // Lógica para cargar rutinas recomendadas
     private fun loadRecommendedRoutines() {
-        var query: Query = firestore.collection("rutinas")
+        Log.d("RecommendationsFragment", "Iniciando la carga de recomendaciones...")
 
-        // Lógica de recomendación simple basada en el nivel del usuario
-        // USAMOS "nivel" AQUÍ PORQUE ASÍ SE LLAMA EL CAMPO EN LOS DOCUMENTOS DE RUTINA
-        userLevel?.let { level ->
-            when (level) {
-                "Principiante" -> {
-                    // Recomendar Principiante o Intermedio
-                    query = query.whereIn("nivel", listOf("Principiante", "Intermedio"))
-                }
-                "Intermedio" -> {
-                    // Recomendar Intermedio o Avanzado
-                    query = query.whereIn("nivel", listOf("Intermedio", "Avanzado"))
-                }
-                "Avanzado" -> {
-                    // Recomendar solo Avanzado
-                    query = query.whereEqualTo("nivel", "Avanzado")
-                }
-                else -> {
-                    // Nivel desconocido o no definido, recomendar principiante
-                    query = query.whereEqualTo("nivel", "Principiante")
-                    Toast.makeText(context, "Nivel de usuario no definido, mostrando rutinas para Principiantes.", Toast.LENGTH_SHORT).show()
-                }
+        var query: Query = firestore.collection("rutinas")
+            .limit(30)
+
+        val level = userLevel ?: "Principiante"
+        query = when (level) {
+            "Intermedio" -> query.whereIn("nivel", listOf("Intermedio", "Avanzado"))
+            "Avanzado" -> query.whereEqualTo("nivel", "Avanzado")
+            else -> query.whereIn("nivel", listOf("Principiante", "Intermedio", "Todos los Niveles"))
+        }
+
+        preferredExerciseType?.let { type ->
+            if (type != "Todos los Tipos") {
+                query = query.whereEqualTo("tipo", type)
             }
-        } ?: run {
-            // Si no hay nivel de usuario, mostrar recomendaciones para principiantes por defecto
-            query = query.whereEqualTo("nivel", "Principiante")
-            Toast.makeText(context, "Nivel de usuario no disponible, mostrando rutinas para Principiantes.", Toast.LENGTH_SHORT).show()
         }
 
         query.get()
             .addOnSuccessListener { documents ->
-                val fetchedRoutines = mutableListOf<Rutina>()
-                for (document in documents) {
-                    val rutina = document.toObject(Rutina::class.java)
-                    rutina.id = document.id
-                    fetchedRoutines.add(rutina)
+                val fetchedRoutines = documents.toObjects(Rutina::class.java).toMutableList()
+                Log.d("RecommendationsFragment", "Rutinas cargadas antes de filtrar: ${fetchedRoutines.size}")
+
+                val finalRecommendations = fetchedRoutines.filter { rutina ->
+                    val hasRequiredEquipment = if (rutina.equipamiento.isNullOrEmpty() || rutina.equipamiento?.contains("Sin equipamiento") == true) {
+                        true
+                    } else {
+                        rutina.equipamiento.orEmpty().any { it in userEquipmentList.orEmpty() }
+                    }
+
+                    val isHealthCompatible = isRoutineHealthCompatible(rutina)
+
+                    hasRequiredEquipment && isHealthCompatible
                 }
+
                 recommendedRoutinesList.clear()
-                recommendedRoutinesList.addAll(fetchedRoutines)
+                recommendedRoutinesList.addAll(finalRecommendations)
                 recommendationsAdapter.notifyDataSetChanged()
 
-                if (fetchedRoutines.isEmpty()) {
-                    Toast.makeText(context, "No hay recomendaciones disponibles para tu nivel.", Toast.LENGTH_SHORT).show()
+                if (finalRecommendations.isEmpty()) {
+                    Toast.makeText(context, "No hay recomendaciones que coincidan con tus preferencias y equipamiento.", Toast.LENGTH_LONG).show()
                 }
             }
             .addOnFailureListener { exception ->
@@ -126,7 +148,25 @@ class RecommendationsFragment : Fragment(), RutinaAdapter.OnRoutineActionListene
             }
     }
 
-    // Reimplementar onSaveRoutineClick para manejar guardar desde recomendaciones
+    private fun isRoutineHealthCompatible(rutina: Rutina): Boolean {
+        if (healthRestrictions == null) return true
+
+        val hasKneePain = (healthRestrictions?.get("restriccionesFisicas") as? Map<String, Any>)?.get("dolorRodilla") as? Boolean ?: false
+        if (hasKneePain) {
+            val hasHighImpactExercises = rutina.ejercicios?.any {
+                it.nombreEjercicio?.contains("salto", ignoreCase = true) == true ||
+                        it.nombreEjercicio?.contains("burpees", ignoreCase = true) == true ||
+                        it.nombreEjercicio?.contains("zancada", ignoreCase = true) == true
+            } ?: false
+            if (hasHighImpactExercises) {
+                Log.d("HealthFilter", "Descartando rutina '${rutina.nombreRutina}' por dolor de rodilla.")
+                return false
+            }
+        }
+
+        return true
+    }
+
     override fun onSaveRoutineClick(rutina: Rutina) {
         val userId = auth.currentUser?.uid
         if (userId == null) {
@@ -150,11 +190,5 @@ class RecommendationsFragment : Fragment(), RutinaAdapter.OnRoutineActionListene
         } ?: run {
             Toast.makeText(context, "No se pudo guardar la rutina (ID no disponible).", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    // Para asegurar que las recomendaciones se recarguen si el usuario cambia de pestaña
-    override fun onResume() {
-        super.onResume()
-        fetchUserLevel() // Volver a obtener el nivel y cargar recomendaciones al volver
     }
 }

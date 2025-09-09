@@ -60,6 +60,15 @@
     <string name="channel_name">Daily Reminder</string>
     <string name="channel_description">Notifications for daily workout reminders</string>
 
+    <string name="hint_exercise_type">Tipo de Ejercicio Preferido</string>
 
+    <string-array name="exercise_type_options">
+        <item>@string/hint_exercise_type</item> <!-- El hint como primera opción -->
+        <item>Cardio</item>
+        <item>Fuerza</item>
+        <item>Resistencia</item>
+        <item>Flexibilidad</item>
+        <item>Mixto</item>
+    </string-array>
     <!-- <string name="app_name">GYM4HOUSE</string> -->
 </resources>

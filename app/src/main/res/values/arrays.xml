@@ -16,10 +16,5 @@
         <item>Mantenerse en Forma</item>
         <item>Mejorar Resistencia</item>
     </string-array>
-    <string-array name="exercise_type_options">
-        <item>Fuerza</item>
-        <item>Cardio</item>
-        <item>Flexibilidad</item>
-        <item>Híbrido</item>
-    </string-array>
+
 </resources>
