@@ -29,6 +29,7 @@ class RecommendationsFragment : Fragment(), RutinaAdapter.OnRoutineActionListene
     private var preferredExerciseType: String? = null
     private var userEquipmentList: List<String>? = null
     private var healthRestrictions: Map<String, Any>? = null
+    private var userActivityLevel: String? = null // NUEVO: Nivel de actividad física
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +54,7 @@ class RecommendationsFragment : Fragment(), RutinaAdapter.OnRoutineActionListene
 
     override fun onResume() {
         super.onResume()
-        fetchUserProfile() // Se carga el perfil completo al entrar al fragmento
+        fetchUserProfile()
     }
 
     private fun fetchUserProfile() {
@@ -73,8 +74,8 @@ class RecommendationsFragment : Fragment(), RutinaAdapter.OnRoutineActionListene
                     userLevel = document.getString("nivelExperiencia")
                     preferredExerciseType = document.getString("tipo_ejercicio_preferido")
                     healthRestrictions = document.get("restriccionesSalud") as? Map<String, Any>
+                    userActivityLevel = document.getString("nivelActividadFisica") // NUEVO
 
-                    // OJO AQUÍ: Solo se obtienen los documentos donde 'estaSeleccionado' es true
                     firestore.collection("usuarios").document(userId).collection("equipamiento")
                         .whereEqualTo("estaSeleccionado", true)
                         .get()
@@ -94,7 +95,7 @@ class RecommendationsFragment : Fragment(), RutinaAdapter.OnRoutineActionListene
                 }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(context, "Error al obtener perfil de usuario: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this.context, "Error al obtener perfil de usuario: ${e.message}", Toast.LENGTH_LONG).show()
                 loadRecommendedRoutines()
             }
     }
@@ -105,6 +106,7 @@ class RecommendationsFragment : Fragment(), RutinaAdapter.OnRoutineActionListene
         var query: Query = firestore.collection("rutinas")
             .limit(30)
 
+        // 1. Filtrar por Nivel de Experiencia
         val level = userLevel ?: "Principiante"
         query = when (level) {
             "Intermedio" -> query.whereIn("nivel", listOf("Intermedio", "Avanzado"))
@@ -112,9 +114,17 @@ class RecommendationsFragment : Fragment(), RutinaAdapter.OnRoutineActionListene
             else -> query.whereIn("nivel", listOf("Principiante", "Intermedio", "Todos los Niveles"))
         }
 
+        // 2. Filtrar por Tipo de Ejercicio Preferido
         preferredExerciseType?.let { type ->
             if (type != "Todos los Tipos") {
                 query = query.whereEqualTo("tipo", type)
+            }
+        }
+
+        // 3. Filtrar por Nivel de Actividad Física
+        userActivityLevel?.let { activityLevel ->
+            if (activityLevel != "Todos los Niveles") {
+                query = query.whereEqualTo("nivelActividadFisica", activityLevel)
             }
         }
 

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.gym4house.databinding.FragmentPerfilBinding
@@ -19,8 +20,6 @@ class PerfilFragment : Fragment() {
 
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
-    // Las propiedades perfilClienteDao y usuarioDao no se están utilizando y se han eliminado para simplificar.
-    // Si necesitas Room en este fragmento, asegúrate de inicializarlas y usarlas.
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,9 +34,6 @@ class PerfilFragment : Fragment() {
 
         firebaseAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
-        // Las DAOs relacionadas con Room se han comentado/eliminado ya que no se estaban usando.
-        // perfilClienteDao = AppDatabase.getDatabase(requireContext()).perfilClienteDao()
-        // usuarioDao = AppDatabase.getDatabase(requireContext()).usuarioDao()
 
         setupSpinners()
         loadUserProfile()
@@ -55,7 +51,7 @@ class PerfilFragment : Fragment() {
 
         val goalAdapter = ArrayAdapter.createFromResource(
             requireContext(),
-            R.array.goal_options,
+            R.array.objetivos_usuario_array,
             android.R.layout.simple_spinner_item
         )
         goalAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -68,6 +64,15 @@ class PerfilFragment : Fragment() {
         )
         exerciseTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerPerfilTipoEjercicios.adapter = exerciseTypeAdapter
+
+        // NUEVA CONFIGURACIÓN DE ADAPTADOR PARA NIVEL DE ACTIVIDAD FÍSICA (US-22)
+        val nivelActividadAdapter = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.activity_level_options,
+            android.R.layout.simple_spinner_item
+        )
+        nivelActividadAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerPerfilNivelActividadFisica.adapter = nivelActividadAdapter
     }
 
     private fun loadUserProfile() {
@@ -87,10 +92,12 @@ class PerfilFragment : Fragment() {
                         val experienceLevel = document.getString("nivelExperiencia")
                         val goal = document.getString("objetivo")
                         val exerciseType = document.getString("tipo_ejercicio_preferido")
+                        val activityLevel = document.getString("nivelActividadFisica") // NUEVO: Leer nivel de actividad física
 
                         setSelectedSpinnerItem(binding.spinnerPerfilNivelExperiencia, experienceLevel)
                         setSelectedSpinnerItem(binding.spinnerPerfilObjetivo, goal)
                         setSelectedSpinnerItem(binding.spinnerPerfilTipoEjercicios, exerciseType)
+                        setSelectedSpinnerItem(binding.spinnerPerfilNivelActividadFisica, activityLevel) // NUEVO: Establecer selección
 
                     } else {
                         Toast.makeText(requireContext(), "Datos de perfil no encontrados.", Toast.LENGTH_SHORT).show()
@@ -118,27 +125,19 @@ class PerfilFragment : Fragment() {
         }
 
         binding.buttonCambiarPassword.setOnClickListener {
-            // Se mantiene la lógica de reemplazar fragmento si ChangePasswordFragment es un fragmento
-            // dentro de MainActivity. Si fuera una Activity, lanzarías un Intent.
             (activity as? MainActivity)?.replaceFragment(ChangePasswordFragment())
         }
 
         binding.buttonConfigurarRecordatorios.setOnClickListener {
-            // Se mantiene la lógica de reemplazar fragmento si RemindersSettingsFragment es un fragmento
-            // dentro de MainActivity. Si fuera una Activity, lanzarías un Intent.
             (activity as? MainActivity)?.replaceFragment(RemindersSettingsFragment())
         }
 
         binding.buttonGestionarRestricciones.setOnClickListener {
-            // *** ESTE ES EL CAMBIO CRÍTICO: Lanzar HealthRestrictionsActivity con un Intent ***
             val intent = Intent(requireContext(), HealthRestrictionsActivity::class.java)
-            // No necesitamos enviar LAUNCH_MODE_EXTRA explícitamente a MODE_EDIT_PROFILE
-            // porque es el valor por defecto en HealthRestrictionsActivity cuando no se especifica.
             startActivity(intent)
             Toast.makeText(requireContext(), "Gestionar Restricciones de Salud", Toast.LENGTH_SHORT).show()
         }
 
-        // BOTÓN NUEVO: "Editar Equipamiento"
         binding.buttonEditarEquipamiento.setOnClickListener {
             val intent = Intent(requireContext(), EquipmentActivity::class.java)
             intent.putExtra(EquipmentActivity.LAUNCH_MODE_EXTRA, EquipmentActivity.MODE_EDIT_PROFILE)
@@ -158,6 +157,15 @@ class PerfilFragment : Fragment() {
         val currentUser = firebaseAuth.currentUser
         if (currentUser != null) {
             val userId = currentUser.uid
+            
+            val nivelActividadFisica = binding.spinnerPerfilNivelActividadFisica.selectedItem.toString()
+
+            // Validación para el nuevo spinner
+            if (nivelActividadFisica == getString(R.string.hint_activity_level)) {
+                Toast.makeText(requireContext(), "Por favor, selecciona tu nivel de actividad física.", Toast.LENGTH_SHORT).show()
+                return
+            }
+
             val userProfile = hashMapOf(
                 "nombre" to binding.editTextPerfilNombre.text.toString(),
                 "edad" to binding.editTextPerfilEdad.text.toString().toLongOrNull(),
@@ -165,7 +173,8 @@ class PerfilFragment : Fragment() {
                 "peso" to binding.editTextPerfilPeso.text.toString().toDoubleOrNull(),
                 "nivelExperiencia" to binding.spinnerPerfilNivelExperiencia.selectedItem.toString(),
                 "objetivo" to binding.spinnerPerfilObjetivo.selectedItem.toString(),
-                "tipo_ejercicio_preferido" to binding.spinnerPerfilTipoEjercicios.selectedItem.toString()
+                "tipo_ejercicio_preferido" to binding.spinnerPerfilTipoEjercicios.selectedItem.toString(),
+                "nivelActividadFisica" to nivelActividadFisica // NUEVO: Guardar nivel de actividad física
             )
 
             firestore.collection("usuarios").document(userId)

@@ -70,5 +70,14 @@
         <item>Flexibilidad</item>
         <item>Mixto</item>
     </string-array>
+    
+    <string name="hint_activity_level">Nivel de Actividad Física</string>
+    <string-array name="activity_level_options">
+        <item>@string/hint_activity_level</item>
+        <item>Sedentario</item>
+        <item>Moderado</item>
+        <item>Activo</item>
+        <item>Muy Activo</item>
+    </string-array>
     <!-- <string name="app_name">GYM4HOUSE</string> -->
 </resources>

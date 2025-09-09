@@ -194,6 +194,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp" />
 
+                <!-- Nuevo Spinner para Nivel de Actividad Física (US-22) -->
+                <TextView
+                    style="@style/TextAppearance.Material3.BodyMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:labelFor="@id/spinnerPerfilNivelActividadFisica"
+                    android:text="Nivel de Actividad Física"
+                    android:textColor="?android:attr/textColorSecondary" />
+
+                <Spinner
+                    android:id="@+id/spinnerPerfilNivelActividadFisica"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="8dp" />
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

@@ -20,7 +20,8 @@ class LoginActivity : AppCompatActivity() {
     // Declarar los Spinners
     private lateinit var spinnerObjetivo: Spinner
     private lateinit var spinnerNivelExperiencia: Spinner
-    private lateinit var spinnerTipoEjercicioPreferido: Spinner // <--- NUEVA DECLARACIÓN
+    private lateinit var spinnerTipoEjercicioPreferido: Spinner
+    private lateinit var spinnerNivelActividadFisica: Spinner // NUEVA DECLARACIÓN para US-22
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +34,8 @@ class LoginActivity : AppCompatActivity() {
         // Inicializar los Spinners usando findViewById
         spinnerObjetivo = findViewById(R.id.spinnerObjetivo)
         spinnerNivelExperiencia = findViewById(R.id.spinnerNivelExperiencia)
-        spinnerTipoEjercicioPreferido = findViewById(R.id.spinnerTipoEjercicioPreferido) // <--- NUEVA INICIALIZACIÓN
+        spinnerTipoEjercicioPreferido = findViewById(R.id.spinnerTipoEjercicioPreferido)
+        spinnerNivelActividadFisica = findViewById(R.id.spinnerNivelActividadFisica) // NUEVA INICIALIZACIÓN para US-22
 
         // Configurar adaptadores para los Spinners
         val objetivosAdapter = ArrayAdapter.createFromResource(
@@ -52,7 +54,6 @@ class LoginActivity : AppCompatActivity() {
         nivelesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerNivelExperiencia.adapter = nivelesAdapter
 
-        // <--- NUEVA CONFIGURACIÓN DE ADAPTADOR PARA TIPO DE EJERCICIO
         val tipoEjercicioAdapter = ArrayAdapter.createFromResource(
             this,
             R.array.exercise_type_options,
@@ -60,7 +61,16 @@ class LoginActivity : AppCompatActivity() {
         )
         tipoEjercicioAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerTipoEjercicioPreferido.adapter = tipoEjercicioAdapter
-        // -------------------------------------------------------------
+
+        // NUEVA CONFIGURACIÓN DE ADAPTADOR PARA NIVEL DE ACTIVIDAD FÍSICA (US-22)
+        val nivelActividadAdapter = ArrayAdapter.createFromResource(
+            this,
+            R.array.activity_level_options,
+            android.R.layout.simple_spinner_item
+        )
+        nivelActividadAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerNivelActividadFisica.adapter = nivelActividadAdapter
+        // --------------------------------------------------------------------------------
 
         binding.buttonRegistrar.setOnClickListener {
             Log.d("LoginActivity", "Botón de Registrar clicado.")
@@ -89,7 +99,8 @@ class LoginActivity : AppCompatActivity() {
         // Obtener valores de los Spinners
         val objetivo = spinnerObjetivo.selectedItem.toString()
         val nivelExperiencia = spinnerNivelExperiencia.selectedItem.toString()
-        val tipoEjercicioPreferido = spinnerTipoEjercicioPreferido.selectedItem.toString() // <--- OBTENER VALOR
+        val tipoEjercicioPreferido = spinnerTipoEjercicioPreferido.selectedItem.toString()
+        val nivelActividadFisica = spinnerNivelActividadFisica.selectedItem.toString() // OBTENER VALOR para US-22
 
         // Validaciones de campos EditText
         if (name.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty() ||
@@ -111,13 +122,18 @@ class LoginActivity : AppCompatActivity() {
             Log.d("LoginActivity", "Validación: Nivel de experiencia no seleccionado.")
             return
         }
-        // <--- NUEVA VALIDACIÓN PARA TIPO DE EJERCICIO PREFERIDO
-        if (tipoEjercicioPreferido == "Selecciona un Tipo de Ejercicio") { // Asumiendo este es el texto por defecto/hint
+        if (tipoEjercicioPreferido == "Tipo de Ejercicio Preferido") { // Asumiendo este es el texto por defecto/hint
             Toast.makeText(this, "Por favor, selecciona tu tipo de ejercicio preferido.", Toast.LENGTH_SHORT).show()
             Log.d("LoginActivity", "Validación: Tipo de ejercicio preferido no seleccionado.")
             return
         }
-        // -------------------------------------------------------------
+        // NUEVA VALIDACIÓN PARA NIVEL DE ACTIVIDAD FÍSICA (US-22)
+        if (nivelActividadFisica == "Nivel de Actividad Física") { // Asumiendo este es el texto por defecto/hint
+            Toast.makeText(this, "Por favor, selecciona tu nivel de actividad física.", Toast.LENGTH_SHORT).show()
+            Log.d("LoginActivity", "Validación: Nivel de actividad física no seleccionado.")
+            return
+        }
+        // --------------------------------------------------------------------------------
 
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             Toast.makeText(this, "Por favor, ingresa un correo electrónico válido.", Toast.LENGTH_SHORT).show()
@@ -175,7 +191,8 @@ class LoginActivity : AppCompatActivity() {
                             "altura" to altura,
                             "objetivo" to objetivo,
                             "nivelExperiencia" to nivelExperiencia,
-                            "tipo_ejercicio_preferido" to tipoEjercicioPreferido // <--- GUARDAR EN FIRESTORE
+                            "tipo_ejercicio_preferido" to tipoEjercicioPreferido,
+                            "nivelActividadFisica" to nivelActividadFisica // GUARDAR EN FIRESTORE para US-22
                         )
 
                         db.collection("usuarios")
