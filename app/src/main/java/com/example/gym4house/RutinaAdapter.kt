@@ -1,30 +1,25 @@
-package com.example.gym4house // Asegúrate de que este sea tu paquete correcto
+package com.example.gym4house
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button // Importar Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class RutinaAdapter(
     private val rutinasList: MutableList<Rutina>,
-    private val listener: OnRoutineActionListener // <-- ¡NUEVO! Pasa un listener al constructor
+    // Usamos una lambda simple para manejar el click. Es más moderno y limpio que la interfaz antigua.
+    private val onRoutineClick: (Rutina) -> Unit
 ) : RecyclerView.Adapter<RutinaAdapter.RutinaViewHolder>() {
 
-    // Interfaz para definir las acciones que el adaptador puede comunicar
-    interface OnRoutineActionListener {
-        fun onSaveRoutineClick(rutina: Rutina)
-        // Puedes añadir más acciones aquí, como onRoutineClick(rutina: Rutina)
-    }
-
-    class RutinaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val nombreRutina: TextView = itemView.findViewById(R.id.textViewCardNombreRutina)
-        val descripcion: TextView = itemView.findViewById(R.id.textViewCardDescripcionRutina)
-        val tipo: TextView = itemView.findViewById(R.id.textViewCardTipo)
-        val nivel: TextView = itemView.findViewById(R.id.textViewCardNivel)
-        val duracion: TextView = itemView.findViewById(R.id.textViewCardDuracion)
-        val buttonGuardar: Button = itemView.findViewById(R.id.buttonGuardarRutina) // <-- ¡NUEVO!
+    inner class RutinaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        // IDs actualizados según el archivo 'item_routine_card.xml'
+        val tvNombre: TextView = itemView.findViewById(R.id.tvRoutineName)
+        val tvNivel: TextView = itemView.findViewById(R.id.tvLevel)
+        val tvDuracion: TextView = itemView.findViewById(R.id.tvDuration)
+        // El botón ahora es un ImageButton (la flecha naranja)
+        val btnStart: ImageButton = itemView.findViewById(R.id.btnStartRoutine)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RutinaViewHolder {
@@ -35,21 +30,25 @@ class RutinaAdapter(
 
     override fun onBindViewHolder(holder: RutinaViewHolder, position: Int) {
         val rutina = rutinasList[position]
-        holder.nombreRutina.text = rutina.nombreRutina
-        holder.descripcion.text = rutina.descripcion
-        holder.tipo.text = "Tipo: ${rutina.tipo}"
-        holder.nivel.text = "Nivel: ${rutina.nivel}"
-        holder.duracion.text = "Duración: ${rutina.duracionMinutos} min"
 
-        // Configurar el click listener para el botón Guardar
-        holder.buttonGuardar.setOnClickListener {
-            listener.onSaveRoutineClick(rutina) // Llama al método del listener con la rutina actual
+        // Asignar datos
+        holder.tvNombre.text = rutina.nombreRutina
+
+        // Manejo de valores vacíos para que no se vea feo
+        holder.tvNivel.text = if (rutina.nivel.isNotEmpty()) rutina.nivel else "General"
+        holder.tvDuracion.text = "${rutina.duracionMinutos} min"
+
+        // Configurar el click.
+        // Hacemos que tanto tocar la tarjeta como el botón de flecha funcionen.
+        val listener = View.OnClickListener {
+            onRoutineClick(rutina)
         }
+
+        holder.itemView.setOnClickListener(listener)
+        holder.btnStart.setOnClickListener(listener)
     }
 
-    override fun getItemCount(): Int {
-        return rutinasList.size
-    }
+    override fun getItemCount(): Int = rutinasList.size
 
     fun updateList(newList: List<Rutina>) {
         rutinasList.clear()

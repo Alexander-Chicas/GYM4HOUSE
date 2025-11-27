@@ -30,11 +30,13 @@ class WorkoutSessionFragment : Fragment() {
     private lateinit var firestore: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
 
-    // 🟢 US-19
+    // Variables de estado
     private var ejercicioIndex = 0
     private var serieIndex = 0
     private var isResting = false
     private var timer: CountDownTimer? = null
+    private var isPaused = false
+    private var timeRemaining: Long = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -49,6 +51,7 @@ class WorkoutSessionFragment : Fragment() {
         firestore = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
 
+        // Recuperar la rutina
         arguments?.getParcelable<Rutina>("rutina")?.let {
             rutinaActual = it
             setupUI()
@@ -56,20 +59,30 @@ class WorkoutSessionFragment : Fragment() {
             startNextExercise()
         } ?: run {
             Toast.makeText(context, "Error: Rutina no recibida", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.popBackStack()
         }
     }
 
     private fun setupUI() {
         binding.tvRoutineName.text = rutinaActual.nombreRutina
         binding.tvRoutineLevel.text = "Nivel: ${rutinaActual.nivel}"
-        binding.chronometerWorkout.base = SystemClock.elapsedRealtime()
+
+        // Configurar botones
         binding.btnFinishWorkout.setOnClickListener { finishWorkout() }
+
+        binding.btnPauseResume.setOnClickListener {
+            togglePause()
+        }
+
+        binding.btnSkip.setOnClickListener {
+            skipExercise()
+        }
     }
 
     private fun startWorkout() {
         workoutStartTime = SystemClock.elapsedRealtime()
-        binding.chronometerWorkout.base = workoutStartTime
-        binding.chronometerWorkout.start()
+        // Aquí podríamos iniciar un cronómetro general para el tiempo total si quisiéramos
+        binding.tvTotalTime.text = "00:00"
     }
 
     private fun startNextExercise() {
@@ -80,25 +93,34 @@ class WorkoutSessionFragment : Fragment() {
 
         val ejercicio = rutinaActual.ejercicios[ejercicioIndex]
 
-        // Animación al cambiar de ejercicio
-        binding.tvExercisesTitle.animate().alpha(0f).setDuration(150).withEndAction {
-            binding.tvExercisesTitle.text = "${ejercicio.nombreEjercicio}"
-            binding.tvExercisesTitle.animate().alpha(1f).duration = 150
+        // Animación de transición
+        binding.cardCurrentExercise.animate().alpha(0f).translationY(20f).setDuration(200).withEndAction {
+            // Actualizar textos
+            binding.tvCurrentExerciseName.text = ejercicio.nombreEjercicio
+            binding.tvSerieInfo.text = "Serie ${serieIndex + 1} de ${ejercicio.series}"
+
+            // Reiniciar visuales
+            binding.cardCurrentExercise.animate().alpha(1f).translationY(0f).setDuration(200).start()
         }
 
-        binding.tvSerieInfo.text = "Serie ${serieIndex + 1}/${ejercicio.series}"
-
-        val color = if (!isResting) Color.parseColor("#4CAF50") else Color.parseColor("#FF9800")
-        binding.tvExercisesTitle.setTextColor(color)
-        binding.tvSerieInfo.setTextColor(color)
-        binding.chronometerWorkout.setTextColor(color)
-
+        // Configurar colores y estado
         if (!isResting) {
-            startTimer(ejercicio.repeticiones.toLong()) {
+            binding.tvStatusLabel.text = "EJERCITANDO"
+            binding.tvStatusLabel.setTextColor(Color.parseColor("#00E676")) // Verde Neón
+            binding.tvTimerMain.setTextColor(Color.WHITE)
+
+            // Para el ejercicio activo, usamos el tiempo estimado o repeticiones
+            // Aquí asumimos un tiempo base por repetición si quieres timer, o solo mostramos info
+            val tiempoEstimado = ejercicio.repeticiones * 3L // 3 segs por rep aprox
+            startTimer(tiempoEstimado) {
                 isResting = true
                 startNextExercise()
             }
         } else {
+            binding.tvStatusLabel.text = "DESCANSO"
+            binding.tvStatusLabel.setTextColor(Color.parseColor("#FF9800")) // Naranja Neón
+            binding.tvTimerMain.setTextColor(Color.parseColor("#FF9800"))
+
             startTimer(ejercicio.descansoSegundos.toLong()) {
                 isResting = false
                 serieIndex++
@@ -113,46 +135,84 @@ class WorkoutSessionFragment : Fragment() {
 
     private fun startTimer(seconds: Long, onFinish: () -> Unit) {
         timer?.cancel()
-        timer = object : CountDownTimer(seconds * 1000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                val sec = millisUntilFinished / 1000
-                val label = if (!isResting) "Ejecutando: $sec s" else "Descanso: $sec s"
-                binding.tvRoutineDuration.text = label
+        val totalMillis = seconds * 1000
+        binding.progressSeries.max = 1000 // Mayor resolución
 
-                // Actualizar barra de progreso
-                val progreso = ((seconds - sec).toFloat() / seconds * 100).toInt()
-                binding.progressSeries.progress = progreso
+        timer = object : CountDownTimer(totalMillis, 100) {
+            override fun onTick(millisUntilFinished: Long) {
+                timeRemaining = millisUntilFinished
+                val sec = millisUntilFinished / 1000
+                binding.tvTimerMain.text = String.format("%02d:%02d", sec / 60, sec % 60)
+
+                // Actualizar barra de progreso inversamente
+                val progress = ((totalMillis - millisUntilFinished).toFloat() / totalMillis * 1000).toInt()
+                binding.progressSeries.setProgress(progress, true)
             }
 
             override fun onFinish() {
+                binding.progressSeries.progress = 1000
                 onFinish()
             }
         }.start()
     }
 
+    private fun togglePause() {
+        if (isPaused) {
+            isPaused = false
+            binding.btnPauseResume.text = "PAUSAR"
+            binding.btnPauseResume.icon = context?.getDrawable(R.drawable.ic_lock) // Icono pausa
+            startTimer(timeRemaining / 1000) {
+                // Lógica de continuación según estado (similar a startNextExercise)
+                if (isResting) {
+                    isResting = false
+                    serieIndex++
+                    // ... (Lógica simplificada para reanudar)
+                    val ejercicio = rutinaActual.ejercicios[ejercicioIndex]
+                    if (serieIndex >= ejercicio.series) {
+                        serieIndex = 0
+                        ejercicioIndex++
+                    }
+                    startNextExercise()
+                } else {
+                    isResting = true
+                    startNextExercise()
+                }
+            }
+        } else {
+            isPaused = true
+            timer?.cancel()
+            binding.btnPauseResume.text = "REANUDAR"
+            binding.btnPauseResume.icon = context?.getDrawable(R.drawable.ic_arrow_back) // Icono play
+        }
+    }
+
+    private fun skipExercise() {
+        timer?.cancel()
+        isResting = false
+        serieIndex = 0
+        ejercicioIndex++
+        startNextExercise()
+    }
+
     private fun finishWorkout() {
         timer?.cancel()
-        binding.chronometerWorkout.stop()
+
         val elapsedMillis = SystemClock.elapsedRealtime() - workoutStartTime
         val durationMinutes = elapsedMillis / (1000 * 60)
 
-        val userId = auth.currentUser?.uid ?: run {
-            Toast.makeText(context, "Usuario no autenticado", Toast.LENGTH_SHORT).show()
-            return
-        }
+        val userId = auth.currentUser?.uid ?: return
 
+        // Preparar datos para guardar
         val ejerciciosParaGuardar = rutinaActual.ejercicios.map { ejercicio ->
             mapOf(
                 "nombreEjercicio" to ejercicio.nombreEjercicio,
                 "repeticiones" to ejercicio.repeticiones,
-                "series" to ejercicio.series,
-                "descansoSegundos" to ejercicio.descansoSegundos
+                "series" to ejercicio.series
             )
         }
 
         val historialEntrenamiento = HistorialRutina(
-            id = firestore.collection("usuarios").document(userId)
-                .collection("progreso").document().id,
+            id = firestore.collection("usuarios").document(userId).collection("progreso").document().id,
             rutinaId = rutinaActual.id,
             nombreRutina = rutinaActual.nombreRutina,
             fechaCompletado = Timestamp.now(),
@@ -161,6 +221,8 @@ class WorkoutSessionFragment : Fragment() {
             ejerciciosRealizados = ejerciciosParaGuardar
         )
 
+        // Guardar en Firebase
+        binding.btnFinishWorkout.isEnabled = false
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 firestore.collection("usuarios")
@@ -170,12 +232,14 @@ class WorkoutSessionFragment : Fragment() {
                     .set(historialEntrenamiento)
                     .await()
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Entrenamiento registrado", Toast.LENGTH_SHORT).show()
-                    (activity as? MainActivity)?.replaceFragment(RoutineHistoryFragment())
+                    Toast.makeText(requireContext(), "¡Entrenamiento Completado!", Toast.LENGTH_LONG).show()
+                    // Volver atrás o ir a resumen
+                    parentFragmentManager.popBackStack()
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Error guardando: ${e.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "Error al guardar", Toast.LENGTH_SHORT).show()
+                    binding.btnFinishWorkout.isEnabled = true
                 }
             }
         }

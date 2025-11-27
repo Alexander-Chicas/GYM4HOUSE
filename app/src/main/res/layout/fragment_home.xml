@@ -5,172 +5,330 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cream_background"
+    android:background="@android:color/black"
     tools:context=".HomeFragment">
+
+    <ImageView
+        android:id="@+id/ivBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:alpha="0.3"
+        android:src="@drawable/background_gym"
+        tools:ignore="ContentDescription" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/gradient_overlay" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:clipToPadding="false"
+        android:paddingBottom="80dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp"
-            android:gravity="center_horizontal">
-
-            <TextView
-                android:id="@+id/tvGreeting"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="¡Hola, Alexander!"
-                android:textColor="@color/black"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                android:layout_marginTop="24dp"
-                android:gravity="center"/>
-
-            <TextView
-                android:id="@+id/tvMotivationalQuote"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tu disciplina es el puente hacia tus metas."
-                android:textColor="@color/text_dark_gray"
-                android:textSize="16sp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="24dp"
-                android:gravity="center"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"/>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="6dp"
-                android:layout_margin="8dp"
-                app:cardBackgroundColor="@color/gym_edit_text">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Tu Entrenamiento Hoy"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold"/>
-
-                    <TextView
-                        android:id="@+id/tvNextReminder"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Cargando próximo recordatorio..."
-                        android:textColor="@color/text_dark_gray"
-                        android:textSize="16sp"/>
-
-                    <Button
-                        android:id="@+id/btnEditReminders"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="Ver / Editar Recordatorios"
-                        android:textColor="@color/white"
-                        android:backgroundTint="@color/gym_brown_primary"
-                        style="@style/Widget.MaterialComponents.Button.TextButton"
-                        android:layout_gravity="end"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <Button
-                android:id="@+id/btnStartWorkout"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:text="INICIAR ENTRENAMIENTO"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:backgroundTint="@color/gym_brown_primary"
-                app:cornerRadius="12dp"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Accesos Rápidos"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_marginTop="32dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginBottom="16dp"/>
+            android:padding="24dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp">
+                android:gravity="center_vertical"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="24dp">
 
-                <Button
-                    android:id="@+id/btnMyRoutines"
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Mis Rutinas"
-                    android:paddingTop="16dp"
-                    android:paddingBottom="16dp"
-                    android:backgroundTint="@color/gym_edit_text"
-                    android:textColor="@color/text_dark_gray"
-                    android:gravity="center"
-                    android:layout_marginEnd="8dp"
-                    app:cornerRadius="12dp" />
+                    android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/btnMyProgress"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Mi Progreso"
-                    android:paddingTop="16dp"
-                    android:paddingBottom="16dp"
-                    android:backgroundTint="@color/gym_edit_text"
-                    android:textColor="@color/text_dark_gray"
-                    android:gravity="center"
-                    android:layout_marginStart="8dp"
-                    app:cornerRadius="12dp" />
+                    <TextView
+                        android:id="@+id/tvGreeting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="¡Hola, Guerrero!"
+                        android:textColor="#FFFFFF"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tu disciplina es el puente."
+                        android:textColor="#B3FFFFFF"
+                        android:textSize="14sp"
+                        tools:ignore="HardcodedText" />
+                </LinearLayout>
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ivProfileHeader"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/logo"
+                    android:scaleType="centerCrop"
+                    android:padding="1dp"
+                    android:background="@drawable/gradient_overlay"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
+                    app:strokeColor="#FF9800"
+                    app:strokeWidth="2dp" />
             </LinearLayout>
 
-            <Button
-                android:id="@+id/btnExploreExercises"
+            <TextView
+                android:text="TU MISIÓN DE HOY"
+                android:textColor="#FF9800"
+                android:textSize="12sp"
+                android:letterSpacing="0.15"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"
+                tools:ignore="HardcodedText"
+                android:layout_height="1dp"
+                android:layout_width="1dp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardWorkoutToday"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="10dp"
+                app:strokeColor="#33FFFFFF"
+                app:strokeWidth="1dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/background_gym"
+                        android:scaleType="centerCrop"
+                        android:alpha="0.9"
+                        tools:ignore="ContentDescription" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/gradient_overlay" />
+
+                    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                        android:id="@+id/btnPlayWorkout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="24dp"
+                        android:layout_marginBottom="24dp"
+                        android:text="INICIAR"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        app:icon="@drawable/ic_check_circle"
+                        app:iconTint="#FFFFFF"
+                        app:backgroundTint="#FF9800"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:id="@+id/tvWorkoutTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Full Body Power"
+                        android:textColor="#FFFFFF"
+                        android:textSize="26sp"
+                        android:textStyle="bold"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginBottom="4dp"
+                        app:layout_constraintBottom_toTopOf="@id/tvWorkoutSub"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/btnPlayWorkout"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:id="@+id/tvWorkoutSub"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="45 min • Alta Intensidad"
+                        android:textColor="#CCFFFFFF"
+                        android:textSize="14sp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginBottom="24dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        tools:ignore="HardcodedText" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:text="EXPLORAR"
+                android:textColor="#80FFFFFF"
+                android:textSize="12sp"
+                android:letterSpacing="0.15"
+                android:textStyle="bold"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="16dp"
+                tools:ignore="HardcodedText"
+                android:layout_height="1dp"
+                android:layout_width="1dp" />
+
+            <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:text="Explorar Ejercicios"
-                android:padding="16dp"
-                android:gravity="center"
-                android:backgroundTint="@color/gym_edit_text"
-                android:textColor="@color/text_dark_gray"
-                app:cornerRadius="12dp" />
+                android:columnCount="2"
+                android:rowCount="2"
+                android:alignmentMode="alignMargins">
 
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="80dp" />
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/btnMisRutinas"
+                    android:layout_width="0dp"
+                    android:layout_height="110dp"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="#1AFFFFFF"
+                    app:cardCornerRadius="20dp"
+                    app:strokeColor="#33FFFFFF"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_dumbbell"
+                            app:tint="#FFFFFF"
+                            tools:ignore="ContentDescription" />
+
+                        <TextView
+                            android:text="Rutinas"
+                            android:textColor="#FFFFFF"
+                            android:textStyle="bold"
+                            android:layout_marginTop="12dp"
+                            tools:ignore="HardcodedText"
+                            android:layout_height="1dp"
+                            android:layout_width="1dp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/btnMiProgreso"
+                    android:layout_width="0dp"
+                    android:layout_height="110dp"
+                    android:layout_columnWeight="1"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="#1AFFFFFF"
+                    app:cardCornerRadius="20dp"
+                    app:strokeColor="#33FFFFFF"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_check_circle"
+                            app:tint="#FFFFFF"
+                            tools:ignore="ContentDescription" />
+
+                        <TextView
+                            android:text="Progreso"
+                            android:textColor="#FFFFFF"
+                            android:textStyle="bold"
+                            android:layout_marginTop="12dp"
+                            tools:ignore="HardcodedText"
+                            android:layout_width="1dp"
+                            android:layout_height="1dp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/btnRecetas"
+                    android:layout_width="0dp"
+                    android:layout_height="110dp"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="8dp"
+                    app:cardBackgroundColor="#1AFFFFFF"
+                    app:cardCornerRadius="20dp"
+                    app:strokeColor="#33FFFFFF"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_cake"
+                            app:tint="#FFFFFF"
+                            tools:ignore="ContentDescription" />
+
+                        <TextView
+                            android:text="Nutrición"
+                            android:textColor="#FFFFFF"
+                            android:textStyle="bold"
+                            android:layout_marginTop="12dp"
+                            tools:ignore="HardcodedText"
+                            android:layout_height="1dp"
+                            android:layout_width="1dp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/btnPerfil"
+                    android:layout_width="0dp"
+                    android:layout_height="110dp"
+                    android:layout_columnWeight="1"
+                    android:layout_marginStart="8dp"
+                    app:cardBackgroundColor="#1AFFFFFF"
+                    app:cardCornerRadius="20dp"
+                    app:strokeColor="#33FFFFFF"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_person"
+                            app:tint="#FFFFFF"
+                            tools:ignore="ContentDescription" />
+
+                        <TextView
+                            android:text="Perfil"
+                            android:textColor="#FFFFFF"
+                            android:textStyle="bold"
+
+                            android:layout_marginTop="12dp"
+                            tools:ignore="HardcodedText"
+                            android:layout_height="1dp"
+                            android:layout_width="1dp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </GridLayout>
 
         </LinearLayout>
     </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,10 +12,10 @@ class HistorialRutinaAdapter(private val historialList: List<HistorialRutina>) :
     RecyclerView.Adapter<HistorialRutinaAdapter.HistorialRutinaViewHolder>() {
 
     class HistorialRutinaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val nombreRutina: TextView = itemView.findViewById(R.id.textViewHistorialNombreRutina)
-        val fechaCompletado: TextView = itemView.findViewById(R.id.textViewHistorialFecha)
-        val duracion: TextView = itemView.findViewById(R.id.textViewHistorialDuracion)
-        val nivel: TextView = itemView.findViewById(R.id.textViewHistorialNivel)
+        // Nuevos IDs del diseño moderno
+        val tvNombre: TextView = itemView.findViewById(R.id.tvRoutineName)
+        val tvFecha: TextView = itemView.findViewById(R.id.tvDate)
+        val tvDuracion: TextView = itemView.findViewById(R.id.tvDuration)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistorialRutinaViewHolder {
@@ -26,17 +26,18 @@ class HistorialRutinaAdapter(private val historialList: List<HistorialRutina>) :
 
     override fun onBindViewHolder(holder: HistorialRutinaViewHolder, position: Int) {
         val historial = historialList[position]
-        holder.nombreRutina.text = historial.nombreRutina
 
-        // Formatear la fecha para mostrarla de forma legible
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-        holder.fechaCompletado.text = "Fecha: ${dateFormat.format(historial.fechaCompletado.toDate())}"
+        holder.tvNombre.text = historial.nombreRutina
 
-        holder.duracion.text = "Duración: ${historial.duracionMinutos} min"
-        holder.nivel.text = "Nivel: ${historial.nivel}"
+        // Formato de fecha corto y elegante (Ej: "26 Nov, 14:30")
+        val dateFormat = SimpleDateFormat("dd MMM, HH:mm", Locale.getDefault())
+        val fechaStr = historial.fechaCompletado?.let {
+            dateFormat.format(it.toDate())
+        } ?: "Sin fecha"
+
+        holder.tvFecha.text = fechaStr
+        holder.tvDuracion.text = "${historial.duracionMinutos} min"
     }
 
-    override fun getItemCount(): Int {
-        return historialList.size
-    }
+    override fun getItemCount(): Int = historialList.size
 }

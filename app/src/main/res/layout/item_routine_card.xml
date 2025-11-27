@@ -1,75 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardBackgroundColor="#1AFFFFFF"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="0dp"
+    app:strokeColor="#33FF9800"
+    app:strokeWidth="1dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/gym_edit_text"
-        android:padding="16dp">
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ivRoutineBackground"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/background_gym"
+            android:alpha="0.5"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/gradient_overlay"
+            app:layout_constraintTop_toTopOf="@id/ivRoutineBackground"
+            app:layout_constraintBottom_toBottomOf="@id/ivRoutineBackground"/>
 
         <TextView
-            android:id="@+id/textViewCardNombreRutina"
-            android:layout_width="match_parent"
+            android:id="@+id/tvRoutineName"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Nombre de la Rutina"
+            android:layout_margin="16dp"
+            android:text="Nombre Rutina"
+            android:textColor="@android:color/white"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_marginBottom="4dp"/>
-
-        <TextView
-            android:id="@+id/textViewCardDescripcionRutina"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Descripción corta de la rutina para dar contexto."
-            android:textSize="14sp"
-            android:textColor="@android:color/darker_gray"
-            android:layout_marginBottom="8dp"/>
+            app:layout_constraintBottom_toTopOf="@id/chipGroup"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="4dp">
-
-            <TextView
-                android:id="@+id/textViewCardTipo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tipo: Full Body"
-                android:textSize="14sp"
-                android:textStyle="italic"
-                android:layout_marginEnd="16dp"/>
-
-            <TextView
-                android:id="@+id/textViewCardNivel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Nivel: Intermedio"
-                android:textSize="14sp"
-                android.textStyle="italic"/>
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/textViewCardDuracion"
+            android:id="@+id/chipGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Duración: 45 minutos"
-            android:textSize="14sp"
-            android:textStyle="italic"/>
+            android:orientation="horizontal"
+            android:padding="16dp"
+            app:layout_constraintTop_toBottomOf="@id/ivRoutineBackground">
 
-        <Button
-            android:id="@+id/buttonGuardarRutina"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Guardar"
-            android:backgroundTint="@color/gym_brown_primary"
-            android:layout_marginTop="8dp"
-            android:layout_gravity="end"/> </LinearLayout>
-</androidx.cardview.widget.CardView>
+            <TextView
+                android:id="@+id/tvLevel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_corner_bg"
+                android:backgroundTint="#33FF9800"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:text="Intermedio"
+                android:textColor="#FF9800"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/rounded_corner_bg"
+                android:backgroundTint="#33FFFFFF"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:text="45 min"
+                android:textColor="#CCFFFFFF"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnStartRoutine"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/rounded_corner_bg"
+            android:backgroundTint="#FF9800"
+            android:src="@drawable/ic_arrow_back"
+            android:rotation="180"
+            app:tint="@android:color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivRoutineBackground" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>
