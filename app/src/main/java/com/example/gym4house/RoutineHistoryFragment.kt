@@ -1,23 +1,26 @@
-package com.example.gym4house // Asegúrate de que este sea tu paquete correcto
+package com.example.gym4house
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView // Importar TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.FirebaseAuth // Para obtener el UID del usuario
-import com.google.firebase.firestore.FirebaseFirestore // Para interactuar con Firestore
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 class RoutineHistoryFragment : Fragment() {
 
     private lateinit var firestore: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
     private lateinit var recyclerViewHistorial: RecyclerView
+    private lateinit var tvEmptyState: TextView // Texto para cuando no hay datos
     private lateinit var historialAdapter: HistorialRutinaAdapter
-    private val historialList = mutableListOf<HistorialRutina>() // Lista mutable para los datos
+    private val historialList = mutableListOf<HistorialRutina>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,45 +34,45 @@ class RoutineHistoryFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_routine_history, container, false)
 
-        recyclerViewHistorial = view.findViewById(R.id.recyclerViewHistorial) // ¡Añadiremos este ID al XML!
-        recyclerViewHistorial.layoutManager = LinearLayoutManager(context)
+        recyclerViewHistorial = view.findViewById(R.id.recyclerViewHistorial)
+        tvEmptyState = view.findViewById(R.id.tvEmptyState) // ID agregado en el XML nuevo
 
+        recyclerViewHistorial.layoutManager = LinearLayoutManager(context)
         historialAdapter = HistorialRutinaAdapter(historialList)
         recyclerViewHistorial.adapter = historialAdapter
 
-        loadRoutineHistory() // Cargar el historial cuando la vista es creada
+        loadRoutineHistory()
 
         return view
     }
 
     private fun loadRoutineHistory() {
-        val userId = auth.currentUser?.uid
-        if (userId == null) {
-            Toast.makeText(context, "No hay usuario autenticado.", Toast.LENGTH_SHORT).show()
-            return
-        }
+        val userId = auth.currentUser?.uid ?: return
 
         firestore.collection("usuarios")
             .document(userId)
             .collection("progreso")
-            .orderBy("fechaCompletado", com.google.firebase.firestore.Query.Direction.DESCENDING) // Ordenar por fecha, los más recientes primero
+            .orderBy("fechaCompletado", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { documents ->
-                historialList.clear() // Limpiar la lista antes de añadir nuevos datos
+                historialList.clear()
                 for (document in documents) {
                     val historial = document.toObject(HistorialRutina::class.java)
                     historialList.add(historial)
                 }
-                historialAdapter.notifyDataSetChanged() // Notificar al adaptador que los datos han cambiado
+                historialAdapter.notifyDataSetChanged()
 
+                // Mostrar/Ocultar mensaje de "Vacío"
                 if (historialList.isEmpty()) {
-                    Toast.makeText(context, "No hay historial de rutinas.", Toast.LENGTH_SHORT).show()
-                    // Si tienes un TextView de "No hay historial", puedes mostrarlo aquí
+                    tvEmptyState.visibility = View.VISIBLE
+                    recyclerViewHistorial.visibility = View.GONE
+                } else {
+                    tvEmptyState.visibility = View.GONE
+                    recyclerViewHistorial.visibility = View.VISIBLE
                 }
             }
-            .addOnFailureListener { exception ->
-                Toast.makeText(context, "Error al cargar el historial: ${exception.message}", Toast.LENGTH_LONG).show()
-                // Log.e("RoutineHistory", "Error loading history", exception)
+            .addOnFailureListener {
+                if(context != null) Toast.makeText(context, "Error cargando historial", Toast.LENGTH_SHORT).show()
             }
     }
 }

@@ -1,83 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@color/cream_background"
-    android:padding="24dp">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Filtrar Rutinas"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="16dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tipo de Rutina:"
-        android:textSize="16sp"
-        android:layout_marginBottom="8dp"/>
-    <Spinner
-        android:id="@+id/spinnerTipo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:entries="@array/tipos_rutina_array"
-        android:minHeight="48dp"
-        android:layout_marginBottom="16dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Nivel:"
-        android:textSize="16sp"
-        android:layout_marginBottom="8dp"/>
-    <Spinner
-        android:id="@+id/spinnerNivel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:entries="@array/niveles_rutina_array"
-        android:minHeight="48dp"
-        android:layout_marginBottom="16dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Duración Máxima (minutos):"
-        android:textSize="16sp"
-        android:layout_marginBottom="8dp"/>
-    <EditText
-        android:id="@+id/editTextDuracionMax"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:hint="Ej. 60"
-        android:minHeight="48dp"
-        android:layout_marginBottom="24dp"/>
+    android:backgroundTint="#1E1E1E"
+    app:cardCornerRadius="24dp"
+    app:strokeColor="#33FFFFFF"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="end">
+        android:orientation="vertical"
+        android:padding="24dp">
 
-        <Button
-            android:id="@+id/buttonCancelarFiltro"
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Filtrar Rutinas"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancelar"
-            android:backgroundTint="@color/gym_brown_primary"
-            android:layout_marginEnd="8dp"/>
+            android:text="Objetivo"
+            android:textColor="#FF9800"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp"/>
 
-        <Button
-            android:id="@+id/buttonAplicarFiltro"
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:singleSelection="true"
+            app:selectionRequired="false">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipMuscle"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ganancia Muscular"
+                android:textColor="@color/white_state_list"
+                app:chipBackgroundColor="@color/chip_background_state_list"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipWeightLoss"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pérdida de Peso"
+                android:textColor="@color/white_state_list"
+                app:chipBackgroundColor="@color/chip_background_state_list"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipMaintenance"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mantenimiento"
+                android:textColor="@color/white_state_list"
+                app:chipBackgroundColor="@color/chip_background_state_list"/>
+        </com.google.android.material.chip.ChipGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#33FFFFFF"
+            android:layout_marginVertical="16dp"/>
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Aplicar Filtro"
-            android:backgroundTint="@color/gym_brown_primary"/>
+            android:text="Nivel"
+            android:textColor="#00E676"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp"/>
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupLevel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:singleSelection="true"
+            app:selectionRequired="false">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipBeginner"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Principiante"
+                android:textColor="@color/white_state_list"
+                app:chipBackgroundColor="@color/chip_background_state_list"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipIntermediate"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Intermedio"
+                android:textColor="@color/white_state_list"
+                app:chipBackgroundColor="@color/chip_background_state_list"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipAdvanced"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Avanzado"
+                android:textColor="@color/white_state_list"
+                app:chipBackgroundColor="@color/chip_background_state_list"/>
+        </com.google.android.material.chip.ChipGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="32dp"
+            android:gravity="end">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancel"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancelar"
+                android:textColor="#B3FFFFFF"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnApply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Aplicar Filtros"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                app:backgroundTint="#FF9800"
+                app:cornerRadius="20dp"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
 
     </LinearLayout>
-
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

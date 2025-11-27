@@ -1,55 +1,64 @@
-package com.example.gym4house // Asegúrate de que este sea tu paquete correcto
+package com.example.gym4house
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.example.gym4house.databinding.FragmentSavedRoutinesBinding // ViewBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class SavedRoutinesFragment : Fragment(), RutinaAdapter.OnRoutineActionListener { // Implementamos el listener por si acaso
+class SavedRoutinesFragment : Fragment() {
+
+    private var _binding: FragmentSavedRoutinesBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var firestore: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
-    private lateinit var recyclerViewSavedRoutines: RecyclerView
-    private lateinit var savedRoutinesAdapter: RutinaAdapter // Reutilizamos el mismo adaptador
+    private lateinit var savedRoutinesAdapter: RutinaAdapter
     private val savedRoutinesList = mutableListOf<Rutina>()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        firestore = FirebaseFirestore.getInstance()
-        auth = FirebaseAuth.getInstance()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_saved_routines, container, false)
+    ): View {
+        _binding = FragmentSavedRoutinesBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        recyclerViewSavedRoutines = view.findViewById(R.id.recyclerViewSavedRoutines)
-        recyclerViewSavedRoutines.layoutManager = LinearLayoutManager(context)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        // Pasamos 'this' como listener al adaptador, aunque aquí quizás el botón de guardar no tenga sentido
-        // pero es necesario para que el adaptador funcione. Podríamos ocultar el botón si fuera necesario.
-        savedRoutinesAdapter = RutinaAdapter(savedRoutinesList, this)
-        recyclerViewSavedRoutines.adapter = savedRoutinesAdapter
+        firestore = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
 
-        loadSavedRoutines() // Cargar las rutinas guardadas al iniciar
+        setupRecyclerView()
+    }
 
-        return view
+    override fun onResume() {
+        super.onResume()
+        loadSavedRoutines()
+    }
+
+    private fun setupRecyclerView() {
+        // Configuramos el adaptador con la Lambda moderna.
+        // Al hacer clic en una rutina guardada, la iniciamos directamente.
+        savedRoutinesAdapter = RutinaAdapter(savedRoutinesList) { rutinaSeleccionada ->
+            startWorkoutSession(rutinaSeleccionada)
+        }
+
+        binding.recyclerViewSavedRoutines.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = savedRoutinesAdapter
+        }
     }
 
     private fun loadSavedRoutines() {
-        val userId = auth.currentUser?.uid
-        if (userId == null) {
-            Toast.makeText(context, "Debes iniciar sesión para ver tus rutinas guardadas.", Toast.LENGTH_SHORT).show()
-            savedRoutinesList.clear()
-            savedRoutinesAdapter.notifyDataSetChanged()
+        val userId = auth.currentUser?.uid ?: run {
+            showEmptyState(true)
             return
         }
 
@@ -58,34 +67,38 @@ class SavedRoutinesFragment : Fragment(), RutinaAdapter.OnRoutineActionListener 
             .collection("rutinasGuardadas")
             .get()
             .addOnSuccessListener { documents ->
-                val fetchedRoutines = mutableListOf<Rutina>()
-                for (document in documents) {
-                    val rutina = document.toObject(Rutina::class.java)
-                    rutina.id = document.id // Asegúrate de asignar el ID del documento
-                    fetchedRoutines.add(rutina)
+                val fetchedRoutines = documents.mapNotNull { doc ->
+                    doc.toObject(Rutina::class.java).apply { id = doc.id }
                 }
+
                 savedRoutinesAdapter.updateList(fetchedRoutines)
-
-                if (fetchedRoutines.isEmpty()) {
-                    Toast.makeText(context, "Aún no tienes rutinas guardadas.", Toast.LENGTH_SHORT).show()
-                }
+                showEmptyState(fetchedRoutines.isEmpty())
             }
-            .addOnFailureListener { exception ->
-                Toast.makeText(context, "Error al cargar rutinas guardadas: ${exception.message}", Toast.LENGTH_LONG).show()
+            .addOnFailureListener {
+                Toast.makeText(context, "Error cargando guardadas", Toast.LENGTH_SHORT).show()
+                showEmptyState(true)
             }
     }
 
-    // Implementación del método de la interfaz RutinaAdapter.OnRoutineActionListener
-    // Aquí podrías decidir qué hacer si el usuario vuelve a tocar "Guardar" en una rutina ya guardada
-    // Por ahora, mostraremos un Toast simple. Podrías implementar una lógica para "desguardar".
-    override fun onSaveRoutineClick(rutina: Rutina) {
-        Toast.makeText(context, "${rutina.nombreRutina} ya está en tus guardados.", Toast.LENGTH_SHORT).show()
-        // O podrías agregar lógica para eliminarla de guardados si se vuelve a presionar
+    private fun showEmptyState(isEmpty: Boolean) {
+        if (_binding == null) return
+        if (isEmpty) {
+            binding.layoutEmptyState.visibility = View.VISIBLE
+            binding.recyclerViewSavedRoutines.visibility = View.GONE
+        } else {
+            binding.layoutEmptyState.visibility = View.GONE
+            binding.recyclerViewSavedRoutines.visibility = View.VISIBLE
+        }
     }
 
-    // Podrías recargar las rutinas si el fragmento vuelve a estar visible
-    override fun onResume() {
-        super.onResume()
-        loadSavedRoutines()
+    private fun startWorkoutSession(rutina: Rutina) {
+        // Usamos el método replaceFragment de MainActivity para iniciar la sesión
+        // Esto nos lleva a la pantalla de "Entrenamiento"
+        (activity as? MainActivity)?.replaceFragment(WorkoutSessionFragment.newInstance(rutina))
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

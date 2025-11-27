@@ -1,141 +1,141 @@
-package com.example.gym4house // Asegúrate de que este sea tu paquete correcto
+package com.example.gym4house
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.FirebaseAuth // Importar FirebaseAuth para el UID
+import com.example.gym4house.databinding.FragmentCurrentRoutineBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query // Importar Query para las consultas
+import com.google.firebase.firestore.Query
 
-class CurrentRoutineFragment : Fragment(),
-    FilterDialogFragment.FilterDialogListener, // Ya implementada
-    RutinaAdapter.OnRoutineActionListener { // ¡NUEVO! Implementa esta interfaz
+class CurrentRoutineFragment : Fragment(), FilterDialogFragment.FilterDialogListener {
+
+    private var _binding: FragmentCurrentRoutineBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var firestore: FirebaseFirestore
-    private lateinit var auth: FirebaseAuth // Añadir referencia a FirebaseAuth
-    private lateinit var recyclerViewRutinas: RecyclerView
+    private lateinit var auth: FirebaseAuth
     private lateinit var rutinaAdapter: RutinaAdapter
     private val rutinasList = mutableListOf<Rutina>()
 
-    private lateinit var buttonFiltrar: Button
-
-    // Variables para almacenar los filtros actuales
+    // Filtros actuales
     private var currentFilterTipo: String? = null
     private var currentFilterNivel: String? = null
     private var currentFilterDuracionMax: Long? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        firestore = FirebaseFirestore.getInstance()
-        auth = FirebaseAuth.getInstance() // Inicializar FirebaseAuth
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_current_routine, container, false)
+    ): View {
+        _binding = FragmentCurrentRoutineBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        recyclerViewRutinas = view.findViewById(R.id.recyclerViewRutinasFiltradas)
-        recyclerViewRutinas.layoutManager = LinearLayoutManager(context)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        // Pasar 'this' como listener al adaptador
-        rutinaAdapter = RutinaAdapter(rutinasList, this) // <-- ¡CAMBIO AQUÍ!
-        recyclerViewRutinas.adapter = rutinaAdapter
+        firestore = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
 
-        buttonFiltrar = view.findViewById(R.id.buttonFiltrar)
-        buttonFiltrar.setOnClickListener {
-            showFilterDialog()
+        setupRecyclerView()
+        setupListeners()
+        loadRoutines(null, null, null) // Carga inicial sin filtros
+    }
+
+    private fun setupRecyclerView() {
+        // Inicializamos el adaptador usando la sintaxis moderna (Lambda)
+        // Cuando se hace clic en una tarjeta:
+        rutinaAdapter = RutinaAdapter(rutinasList) { rutinaSeleccionada ->
+            // Acción al hacer clic: Guardar la rutina o ir al detalle
+            saveRoutineToUser(rutinaSeleccionada)
         }
 
-        loadRoutines(currentFilterTipo, currentFilterNivel, currentFilterDuracionMax)
-
-        return view
+        binding.recyclerViewRutinasFiltradas.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = rutinaAdapter
+        }
     }
 
-    private fun showFilterDialog() {
-        val dialog = FilterDialogFragment()
-        dialog.setFilterDialogListener(this)
-        dialog.show(childFragmentManager, "FilterDialog")
+    private fun setupListeners() {
+        binding.buttonFiltrar.setOnClickListener {
+            val dialog = FilterDialogFragment()
+            dialog.setFilterDialogListener(this)
+            dialog.show(childFragmentManager, "FilterDialog")
+        }
     }
 
-    // --- Implementación del método de FilterDialogListener ---
+    // Callback del diálogo de filtros
     override fun onApplyFilters(tipo: String?, nivel: String?, duracionMax: Long?) {
         currentFilterTipo = tipo
         currentFilterNivel = nivel
         currentFilterDuracionMax = duracionMax
+
         loadRoutines(currentFilterTipo, currentFilterNivel, currentFilterDuracionMax)
-        Toast.makeText(context, "Filtros aplicados.", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Filtros aplicados", Toast.LENGTH_SHORT).show()
     }
 
-    // --- Implementación del método de RutinaAdapter.OnRoutineActionListener ---
-    override fun onSaveRoutineClick(rutina: Rutina) {
-        val userId = auth.currentUser?.uid
-        if (userId == null) {
-            Toast.makeText(context, "Debes iniciar sesión para guardar rutinas.", Toast.LENGTH_SHORT).show()
+    private fun saveRoutineToUser(rutina: Rutina) {
+        val userId = auth.currentUser?.uid ?: run {
+            Toast.makeText(context, "Inicia sesión para guardar", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Referencia a la subcolección donde se guardarán las rutinas del usuario
-        val savedRoutinesRef = firestore.collection("usuarios")
+        // Usamos el ID de la rutina para evitar duplicados
+        val routineId = rutina.id
+        if (routineId.isEmpty()) {
+            Toast.makeText(context, "Error: Rutina sin ID", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        firestore.collection("usuarios")
             .document(userId)
             .collection("rutinasGuardadas")
-
-        // Para evitar duplicados y facilitar el acceso, usaremos el ID de la rutina como ID del documento
-        // en la subcolección del usuario.
-        rutina.id?.let { routineId ->
-            savedRoutinesRef.document(routineId)
-                .set(rutina) // Guarda el objeto Rutina completo
-                .addOnSuccessListener {
-                    Toast.makeText(context, "${rutina.nombreRutina} guardada correctamente.", Toast.LENGTH_SHORT).show()
-                }
-                .addOnFailureListener { e ->
-                    Toast.makeText(context, "Error al guardar rutina: ${e.message}", Toast.LENGTH_LONG).show()
-                    // Log.e("SaveRoutine", "Error saving routine", e)
-                }
-        } ?: run {
-            Toast.makeText(context, "No se pudo guardar la rutina (ID no disponible).", Toast.LENGTH_SHORT).show()
-        }
+            .document(routineId)
+            .set(rutina)
+            .addOnSuccessListener {
+                Toast.makeText(context, "¡${rutina.nombreRutina} guardada en tu perfil!", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "Error al guardar", Toast.LENGTH_SHORT).show()
+            }
     }
-
 
     private fun loadRoutines(tipo: String?, nivel: String?, duracionMax: Long?) {
         var query: Query = firestore.collection("rutinas")
 
-        tipo?.let {
-            query = query.whereEqualTo("tipo", it)
-        }
-        nivel?.let {
-            query = query.whereEqualTo("nivel", it)
-        }
-        duracionMax?.let {
-            query = query.whereLessThanOrEqualTo("duracionMinutos", it)
-        }
+        // Aplicar filtros si existen
+        if (!tipo.isNullOrEmpty()) query = query.whereEqualTo("tipo", tipo)
+        if (!nivel.isNullOrEmpty()) query = query.whereEqualTo("nivel", nivel)
+        if (duracionMax != null) query = query.whereLessThanOrEqualTo("duracionMinutos", duracionMax)
 
         query.get()
             .addOnSuccessListener { documents ->
-                val fetchedRutinas = mutableListOf<Rutina>()
-                for (document in documents) {
-                    val rutina = document.toObject(Rutina::class.java)
-                    // Asegúrate de que el ID del documento de Firestore se asigne a la propiedad 'id' de Rutina
-                    // Esto es crucial para la lógica de guardado y futura identificación.
-                    rutina.id = document.id // Asigna el ID del documento de Firestore
-                    fetchedRutinas.add(rutina)
-                }
-                rutinaAdapter.updateList(fetchedRutinas)
+                val newRutinas = documents.mapNotNull { doc ->
+                    doc.toObject(Rutina::class.java).apply { id = doc.id }
+                }.toMutableList()
 
-                if (fetchedRutinas.isEmpty()) {
-                    Toast.makeText(context, "No hay rutinas disponibles con los filtros seleccionados.", Toast.LENGTH_SHORT).show()
+                rutinaAdapter.updateList(newRutinas)
+
+                // Manejo visual de estado vacío
+                if (newRutinas.isEmpty()) {
+                    binding.tvEmptyState.visibility = View.VISIBLE
+                    binding.recyclerViewRutinasFiltradas.visibility = View.GONE
+                } else {
+                    binding.tvEmptyState.visibility = View.GONE
+                    binding.recyclerViewRutinasFiltradas.visibility = View.VISIBLE
                 }
             }
-            .addOnFailureListener { exception ->
-                Toast.makeText(context, "Error al cargar las rutinas: ${exception.message}", Toast.LENGTH_LONG).show()
+            .addOnFailureListener {
+                Toast.makeText(context, "Error cargando rutinas", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

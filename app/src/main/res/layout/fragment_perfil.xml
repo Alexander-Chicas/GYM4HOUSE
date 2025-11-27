@@ -1,318 +1,336 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="@color/cream_background"
-    tools:context=".PerfilFragment">
+    android:background="@android:color/black">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ImageView
+        android:id="@+id/ivBackground"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:alpha="0.3"
+        android:src="@drawable/background_gym" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/gradient_overlay" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:layout_marginTop="48dp"
+        android:layout_marginStart="24dp"
+        android:text="Mi Perfil"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Card Datos Personales -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_datos_personales"
-            android:layout_width="0dp"
+    <ImageButton
+        android:id="@+id/btnSettings"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_menu_preferences"
+        app:tint="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:clipToPadding="false"
+        android:paddingBottom="80dp"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:cardElevation="4dp"
-            app:cardCornerRadius="8dp"
-            android:backgroundTint="@color/gym_edit_text">
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp"
+            android:paddingBottom="24dp"
+            android:gravity="center_horizontal">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivProfileImage"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:src="@drawable/ic_person"
+                android:scaleType="centerCrop"
+                android:padding="2dp"
+                android:background="@drawable/gradient_overlay"
+                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
+                app:strokeColor="#FF9800"
+                app:strokeWidth="3dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:boxStrokeWidth="0dp"
+                app:hintEnabled="false">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTextPerfilNombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Cargando..."
+                    android:textColor="@android:color/white"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:background="@android:color/transparent"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/tvUserLevel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nivel: Principiante"
+                android:textColor="#FF9800"
+                android:background="#33FF9800"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:layout_marginTop="-8dp"
+                android:layout_marginBottom="24dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:orientation="horizontal"
+                android:baselineAligned="false"
+                android:layout_marginBottom="24dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Datos Personales"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                    android:layout_marginBottom="16dp"/>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/layoutPerfilNombre"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Nombre"
-                    app:startIconDrawable="@drawable/ic_person">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/editTextPerfilNombre"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    app:cardBackgroundColor="#1AFFFFFF"
+                    app:cardCornerRadius="16dp"
+                    app:strokeColor="#33FFFFFF"
+                    app:strokeWidth="1dp">
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/gym_edit_text" />
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="16dp">
+                        <TextView
+                            android:text="0"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"
+                            android:textSize="20sp"
+                            android:layout_height="36dp"
+                            android:layout_width="65dp"/>
+                        <TextView
+                            android:text="Rutinas"
+                            android:textColor="#B3FFFFFF"
+                            android:textSize="12sp"
+                            android:layout_height="36dp"
+                            android:layout_width="65dp"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    app:cardBackgroundColor="#1AFFFFFF"
+                    app:cardCornerRadius="16dp"
+                    app:strokeColor="#33FFFFFF"
+                    app:strokeWidth="1dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="16dp">
+                        <TextView
+                            android:text="0"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"
+                            android:textSize="20sp"
+                            android:layout_height="36dp"
+                            android:layout_width="65dp"/>
+                        <TextView
+                            android:text="Días Activo"
+                            android:textColor="#B3FFFFFF"
+                            android:textSize="12sp"
+                            android:layout_height="36dp"
+                            android:layout_width="65dp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <TextView
+                android:text="Mis Datos"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="4dp"
+                    android:hint="Edad"
+                    app:boxBackgroundColor="#99000000"
+                    app:boxStrokeColor="#FFFFFF"
+                    app:hintTextColor="#FFFFFF">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextPerfilEdad"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/white"
+                        android:inputType="number" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/layoutPerfilEmail"
-                    android:layout_width="match_parent"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:hint="Email"
-                    app:startIconDrawable="@drawable/ic_email">
-
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="4dp"
+                    android:hint="Peso"
+                    app:boxBackgroundColor="#99000000"
+                    app:boxStrokeColor="#FFFFFF"
+                    app:hintTextColor="#FFFFFF">
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/editTextPerfilEmail"
+                        android:id="@+id/editTextPerfilPeso"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/gym_edit_text"
-                        android:focusable="false"
-                        android:clickable="false"/>
+                        android:textColor="@android:color/white"
+                        android:inputType="numberDecimal" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="8dp">
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/layoutPerfilEdad"
-                        android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:hint="Altura"
+                    app:boxBackgroundColor="#99000000"
+                    app:boxStrokeColor="#FFFFFF"
+                    app:hintTextColor="#FFFFFF">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextPerfilAltura"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Edad"
-                        app:startIconDrawable="@drawable/ic_cake">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/editTextPerfilEdad"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@color/gym_edit_text"
-                            android:inputType="number"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/layoutPerfilAltura"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="8dp"
-                        android:hint="Altura (cm)"
-                        app:startIconDrawable="@drawable/ic_height">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/editTextPerfilAltura"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@color/gym_edit_text"
-                            android:inputType="number"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/layoutPerfilPeso"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="8dp"
-                        android:hint="Peso (kg)"
-                        app:startIconDrawable="@drawable/ic_weight">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/editTextPerfilPeso"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@color/gym_edit_text"
-                            android:inputType="numberDecimal"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                </LinearLayout>
+                        android:textColor="@android:color/white"
+                        android:inputType="numberDecimal" />
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
 
-        <!-- Card Objetivos -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_objetivos"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/card_datos_personales"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:cardElevation="4dp"
-            app:cardCornerRadius="8dp"
-            android:backgroundTint="@color/gym_edit_text">
-
-            <LinearLayout
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:text="Objetivos y Preferencias"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:labelFor="@id/spinnerPerfilNivelExperiencia"
-                    android:text="Nivel de Experiencia"
-                    android:textColor="?android:attr/textColorSecondary" />
-
-                <Spinner
-                    android:id="@+id/spinnerPerfilNivelExperiencia"
+                android:layout_marginTop="16dp"
+                android:hint="Mi Objetivo"
+                app:boxBackgroundColor="#99000000"
+                app:boxStrokeColor="#FFFFFF"
+                app:hintTextColor="#FFFFFF">
+                <AutoCompleteTextView
+                    android:id="@+id/autoCompleteObjetivo"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginBottom="8dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:labelFor="@id/spinnerPerfilObjetivo"
-                    android:text="Mi Objetivo Principal"
-                    android:textColor="?android:attr/textColorSecondary" />
+                    android:inputType="none"
+                    android:textColor="@android:color/white"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-                <Spinner
-                    android:id="@+id/spinnerPerfilObjetivo"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginBottom="8dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:labelFor="@id/spinnerPerfilTipoEjercicios"
-                    android:text="Tipo de Ejercicio Preferido"
-                    android:textColor="?android:attr/textColorSecondary" />
-
-                <Spinner
-                    android:id="@+id/spinnerPerfilTipoEjercicios"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:labelFor="@id/spinnerPerfilNivelActividadFisica"
-                    android:text="Nivel de Actividad Física"
-                    android:textColor="?android:attr/textColorSecondary" />
-
-                <Spinner
-                    android:id="@+id/spinnerPerfilNivelActividadFisica"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginBottom="8dp" />
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Card Cuenta -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_cuenta"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/card_objetivos"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:cardElevation="4dp"
-            app:cardCornerRadius="8dp"
-            android:backgroundTint="@color/gym_edit_text">
-
-            <LinearLayout
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ajustes de la Cuenta"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                    android:layout_marginBottom="16dp"/>
-
-                <Button
-                    android:id="@+id/buttonCambiarPassword"
-                    style="@style/GymButton"
+                android:layout_marginTop="12dp"
+                android:hint="Experiencia"
+                app:boxBackgroundColor="#99000000"
+                app:boxStrokeColor="#FFFFFF"
+                app:hintTextColor="#FFFFFF">
+                <AutoCompleteTextView
+                    android:id="@+id/autoCompleteExperiencia"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Cambiar Contraseña"
-                    app:icon="@drawable/ic_lock"
-                    android:textSize="16sp"/>
+                    android:inputType="none"
+                    android:textColor="@android:color/white"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
-                    android:id="@+id/buttonConfigurarRecordatorios"
-                    style="@style/GymButton"
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="Nivel de Actividad"
+                app:boxBackgroundColor="#99000000"
+                app:boxStrokeColor="#FFFFFF"
+                app:hintTextColor="#FFFFFF">
+                <AutoCompleteTextView
+                    android:id="@+id/autoCompleteActividad"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Configurar Recordatorios"
-                    app:icon="@drawable/ic_notifications"
-                    android:textSize="16sp"/>
+                    android:inputType="none"
+                    android:textColor="@android:color/white"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
-                    android:id="@+id/buttonGestionarRestricciones"
-                    style="@style/GymButton"
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="Tipo de Ejercicio Preferido"
+                app:boxBackgroundColor="#99000000"
+                app:boxStrokeColor="#FFFFFF"
+                app:hintTextColor="#FFFFFF">
+                <AutoCompleteTextView
+                    android:id="@+id/autoCompleteTipoEjercicio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Gestionar Restricciones de Salud"
-                    app:icon="@drawable/ic_edit_24dp"
-                    android:textSize="16sp"/>
+                    android:inputType="none"
+                    android:textColor="@android:color/white"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
-                    android:id="@+id/buttonEditarEquipamiento"
-                    style="@style/GymButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Editar Equipamiento"
-                    app:icon="@drawable/ic_dumbbell"
-                    android:textSize="16sp"/>
 
-                <Button
-                    android:id="@+id/buttonCerrarSesion"
-                    style="@style/GymButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Cerrar Sesión"
-                    app:icon="@drawable/ic_logout"
-                    app:iconSize="20dp"
-                    app:iconTint="@color/md_theme_error"
-                    android:textColor="@color/md_theme_error"
-                    android:textSize="16sp"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonGuardarCambios"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="32dp"
+                android:text="Actualizar Datos"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                app:backgroundTint="@android:color/white"
+                app:cornerRadius="30dp"/>
 
-                <!-- Switch de Modo Oscuro al final -->
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchDarkMode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Modo Oscuro"
-                    android:textSize="16sp"
-                    android:layout_marginTop="16dp"/>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+            <TextView
+                android:id="@+id/editTextPerfilEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="usuario@email.com"
+                android:textColor="#66FFFFFF"
+                android:textSize="12sp"
+                android:layout_marginTop="16dp"/>
 
-        <!-- Botón Guardar Cambios -->
-        <Button
-            android:id="@+id/buttonGuardarCambios"
-            style="@style/GymButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Guardar Cambios"
-            android:layout_marginTop="24dp"
-            app:layout_constraintTop_toBottomOf="@id/card_cuenta"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="16dp"
-            android:textSize="16sp"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

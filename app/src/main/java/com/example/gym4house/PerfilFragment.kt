@@ -1,23 +1,40 @@
 package com.example.gym4house
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.example.gym4house.databinding.FragmentPerfilBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 
 class PerfilFragment : Fragment() {
 
     private var _binding: FragmentPerfilBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var firebaseAuth: FirebaseAuth
-    private lateinit var firestore: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
+    private lateinit var storage: FirebaseStorage
+
+    // Variable para guardar la nueva foto si el usuario la cambia
+    private var newImageUri: Uri? = null
+
+    // Lanzador para abrir la galería
+    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri != null) {
+            newImageUri = uri
+            // Mostrar la nueva foto inmediatamente
+            binding.ivProfileImage.setImageURI(uri)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,139 +47,134 @@ class PerfilFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        firebaseAuth = FirebaseAuth.getInstance()
-        firestore = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
+        storage = FirebaseStorage.getInstance()
 
-        setupSpinners()
-        loadUserProfile()
+        setupDropdowns()
+        loadUserData()
         setupListeners()
-        setupDarkModeSwitch()
     }
 
-    private fun setupSpinners() {
-        listOf(
-            binding.spinnerPerfilNivelExperiencia to R.array.experience_level_options,
-            binding.spinnerPerfilObjetivo to R.array.objetivos_usuario_array,
-            binding.spinnerPerfilTipoEjercicios to R.array.exercise_type_options,
-            binding.spinnerPerfilNivelActividadFisica to R.array.activity_level_options
-        ).forEach { (spinner, arrayRes) ->
-            ArrayAdapter.createFromResource(
-                requireContext(),
-                arrayRes,
-                android.R.layout.simple_spinner_item
-            ).also { adapter ->
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                spinner.adapter = adapter
-            }
-        }
+    private fun setupDropdowns() {
+        val context = requireContext()
+        // Llenar los menús con las opciones de strings.xml
+        val objetivos = resources.getStringArray(R.array.objetivos_usuario_array)
+        binding.autoCompleteObjetivo.setAdapter(ArrayAdapter(context, android.R.layout.simple_dropdown_item_1line, objetivos))
+
+        val niveles = resources.getStringArray(R.array.niveles_rutina_array)
+        binding.autoCompleteExperiencia.setAdapter(ArrayAdapter(context, android.R.layout.simple_dropdown_item_1line, niveles))
+
+        val actividad = resources.getStringArray(R.array.activity_level_options)
+        binding.autoCompleteActividad.setAdapter(ArrayAdapter(context, android.R.layout.simple_dropdown_item_1line, actividad))
+
+        val ejercicios = resources.getStringArray(R.array.exercise_type_options)
+        binding.autoCompleteTipoEjercicio.setAdapter(ArrayAdapter(context, android.R.layout.simple_dropdown_item_1line, ejercicios))
     }
 
-    private fun loadUserProfile() {
-        val currentUser = firebaseAuth.currentUser ?: return
-        binding.editTextPerfilEmail.setText(currentUser.email)
+    private fun loadUserData() {
+        val uid = auth.currentUser?.uid ?: return
+        binding.editTextPerfilEmail.setText(auth.currentUser?.email)
 
-        firestore.collection("usuarios").document(currentUser.uid)
-            .get()
+        db.collection("usuarios").document(uid).get()
             .addOnSuccessListener { document ->
-                val b = _binding ?: return@addOnSuccessListener
                 if (document.exists()) {
-                    b.editTextPerfilNombre.setText(document.getString("nombre") ?: "")
-                    b.editTextPerfilEdad.setText(document.getLong("edad")?.toString() ?: "")
-                    b.editTextPerfilAltura.setText(document.getDouble("altura")?.toString() ?: "")
-                    b.editTextPerfilPeso.setText(document.getDouble("peso")?.toString() ?: "")
+                    // Cargar Textos
+                    binding.editTextPerfilNombre.setText(document.getString("nombre"))
+                    binding.editTextPerfilEdad.setText(document.getLong("edad")?.toString())
+                    binding.editTextPerfilPeso.setText(document.getDouble("peso")?.toString())
+                    binding.editTextPerfilAltura.setText(document.getDouble("altura")?.toString())
 
-                    setSelectedSpinnerItem(b.spinnerPerfilNivelExperiencia, document.getString("nivelExperiencia"))
-                    setSelectedSpinnerItem(b.spinnerPerfilObjetivo, document.getString("objetivo"))
-                    setSelectedSpinnerItem(b.spinnerPerfilTipoEjercicios, document.getString("tipo_ejercicio_preferido"))
-                    setSelectedSpinnerItem(b.spinnerPerfilNivelActividadFisica, document.getString("nivelActividadFisica"))
-                } else {
-                    Toast.makeText(requireContext(), "Datos de perfil no encontrados.", Toast.LENGTH_SHORT).show()
+                    // Cargar Dropdowns (false para que no se desplieguen solos)
+                    binding.autoCompleteObjetivo.setText(document.getString("objetivo"), false)
+                    binding.autoCompleteExperiencia.setText(document.getString("nivelExperiencia"), false)
+                    binding.autoCompleteActividad.setText(document.getString("nivelActividad"), false)
+                    binding.autoCompleteTipoEjercicio.setText(document.getString("tipoEjercicio"), false)
+
+                    // Cargar Foto con Glide
+                    val photoUrl = document.getString("photoUrl")
+                    if (!photoUrl.isNullOrEmpty()) {
+                        Glide.with(this)
+                            .load(photoUrl)
+                            .circleCrop() // Recorte circular
+                            .placeholder(R.drawable.ic_person)
+                            .into(binding.ivProfileImage)
+                    }
+
+                    // Cargar Nivel en el texto naranja (Opcional: Lógica visual)
+                    val nivel = document.getString("nivelExperiencia") ?: "Principiante"
+                    binding.tvUserLevel.text = "Nivel: $nivel"
                 }
             }
-            .addOnFailureListener { e ->
-                val b = _binding ?: return@addOnFailureListener
-                Toast.makeText(requireContext(), "Error al cargar el perfil: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    private fun setSelectedSpinnerItem(spinner: android.widget.Spinner, value: String?) {
-        if (value != null) {
-            val adapter = spinner.adapter as ArrayAdapter<String>
-            val position = adapter.getPosition(value)
-            if (position != -1) spinner.setSelection(position)
-        }
     }
 
     private fun setupListeners() {
-        val b = _binding ?: return
-        b.buttonGuardarCambios.setOnClickListener { saveUserProfile() }
-        b.buttonCambiarPassword.setOnClickListener {
-            (activity as? MainActivity)?.replaceFragment(ChangePasswordFragment(), addToBackStack = false)
+        // 1. Cambiar Foto (Clic en la imagen)
+        binding.ivProfileImage.setOnClickListener {
+            pickImageLauncher.launch("image/*")
         }
-        b.buttonConfigurarRecordatorios.setOnClickListener {
-            (activity as? MainActivity)?.replaceFragment(RemindersSettingsFragment())
+
+        // 2. Ir a Ajustes (Engranaje)
+        binding.btnSettings.setOnClickListener {
+            // Navegar al fragmento de Ajustes (lo crearemos después)
+            (activity as? MainActivity)?.replaceFragment(SettingsFragment())
         }
-        b.buttonGestionarRestricciones.setOnClickListener {
-            startActivity(android.content.Intent(requireContext(), HealthRestrictionsActivity::class.java))
-        }
-        b.buttonEditarEquipamiento.setOnClickListener {
-            val intent = android.content.Intent(requireContext(), EquipmentActivity::class.java)
-            intent.putExtra(EquipmentActivity.LAUNCH_MODE_EXTRA, EquipmentActivity.MODE_EDIT)
-            startActivity(intent)
-        }
-        b.buttonCerrarSesion.setOnClickListener {
-            firebaseAuth.signOut()
-            val intent = android.content.Intent(activity, WelcomeActivity::class.java)
-            intent.flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            activity?.finish()
+
+        // 3. Guardar Cambios
+        binding.buttonGuardarCambios.setOnClickListener {
+            saveChanges()
         }
     }
 
-    private fun saveUserProfile() {
-        val currentUser = firebaseAuth.currentUser ?: return
-        val b = _binding ?: return
+    private fun saveChanges() {
+        val uid = auth.currentUser?.uid ?: return
+        binding.buttonGuardarCambios.isEnabled = false
+        binding.buttonGuardarCambios.text = "Guardando..."
 
-        val nivelActividad = b.spinnerPerfilNivelActividadFisica.selectedItem.toString()
-        if (nivelActividad == getString(R.string.hint_activity_level)) {
-            Toast.makeText(requireContext(), "Selecciona tu nivel de actividad física.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val userProfile = hashMapOf(
-            "nombre" to b.editTextPerfilNombre.text.toString(),
-            "edad" to b.editTextPerfilEdad.text.toString().toLongOrNull(),
-            "altura" to b.editTextPerfilAltura.text.toString().toDoubleOrNull(),
-            "peso" to b.editTextPerfilPeso.text.toString().toDoubleOrNull(),
-            "nivelExperiencia" to b.spinnerPerfilNivelExperiencia.selectedItem.toString(),
-            "objetivo" to b.spinnerPerfilObjetivo.selectedItem.toString(),
-            "tipo_ejercicio_preferido" to b.spinnerPerfilTipoEjercicios.selectedItem.toString(),
-            "nivelActividadFisica" to nivelActividad
+        // Datos básicos
+        val updates = hashMapOf<String, Any>(
+            "nombre" to binding.editTextPerfilNombre.text.toString(),
+            "edad" to (binding.editTextPerfilEdad.text.toString().toIntOrNull() ?: 0),
+            "peso" to (binding.editTextPerfilPeso.text.toString().toDoubleOrNull() ?: 0.0),
+            "altura" to (binding.editTextPerfilAltura.text.toString().toDoubleOrNull() ?: 0.0),
+            "objetivo" to binding.autoCompleteObjetivo.text.toString(),
+            "nivelExperiencia" to binding.autoCompleteExperiencia.text.toString(),
+            "nivelActividad" to binding.autoCompleteActividad.text.toString(),
+            "tipoEjercicio" to binding.autoCompleteTipoEjercicio.text.toString()
         )
 
-        firestore.collection("usuarios").document(currentUser.uid)
-            .update(userProfile as Map<String, Any>)
-            .addOnSuccessListener {
-                if (_binding == null) return@addOnSuccessListener
-                Toast.makeText(requireContext(), "Perfil actualizado correctamente.", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener { e ->
-                if (_binding == null) return@addOnFailureListener
-                Toast.makeText(requireContext(), "Error al actualizar el perfil: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
+        // ¿El usuario cambió la foto?
+        if (newImageUri != null) {
+            // Subir foto nueva primero
+            val ref = storage.reference.child("profile_images/$uid.jpg")
+            ref.putFile(newImageUri!!)
+                .addOnSuccessListener {
+                    ref.downloadUrl.addOnSuccessListener { uri ->
+                        updates["photoUrl"] = uri.toString()
+                        updateFirestore(uid, updates)
+                    }
+                }
+                .addOnFailureListener {
+                    Toast.makeText(context, "Error al subir foto", Toast.LENGTH_SHORT).show()
+                    updateFirestore(uid, updates) // Guardar datos aunque falle la foto
+                }
+        } else {
+            // Solo actualizar datos
+            updateFirestore(uid, updates)
+        }
     }
 
-    private fun setupDarkModeSwitch() {
-        val mainActivity = activity as? MainActivity ?: return
-        val b = _binding ?: return
-
-        val isDarkMode = mainActivity.getSharedPreferences("settings", android.content.Context.MODE_PRIVATE)
-            .getBoolean("dark_mode", false)
-        b.switchDarkMode.isChecked = isDarkMode
-
-        b.switchDarkMode.setOnCheckedChangeListener { _, isChecked ->
-            mainActivity.setDarkMode(isChecked)
-        }
+    private fun updateFirestore(uid: String, updates: HashMap<String, Any>) {
+        db.collection("usuarios").document(uid).update(updates)
+            .addOnSuccessListener {
+                Toast.makeText(context, "¡Perfil Actualizado!", Toast.LENGTH_SHORT).show()
+                binding.buttonGuardarCambios.isEnabled = true
+                binding.buttonGuardarCambios.text = "Guardar Cambios"
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "Error al guardar", Toast.LENGTH_SHORT).show()
+                binding.buttonGuardarCambios.isEnabled = true
+            }
     }
 
     override fun onDestroyView() {
