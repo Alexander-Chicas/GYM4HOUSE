@@ -2,6 +2,7 @@ package com.example.gym4house
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager // Importante para quitar la barra
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 
@@ -9,30 +10,35 @@ class WelcomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Establece el layout para esta actividad a 'activity_welcome.xml'
+
+        // --- INICIO DEL TRUCO DE DISEÑO ---
+        // Estas líneas eliminan los límites de la pantalla (la barra de estado y navegación)
+        // haciendo que tu foto oscura cubra TODO el celular. ¡Adiós barra café!
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+        )
+        // --- FIN DEL TRUCO ---
+
+        // Establece el layout para esta actividad
         setContentView(R.layout.activity_welcome)
 
-        // Referenciar los botones de la interfaz de usuario por sus IDs
+        // Referenciar los botones
         val buttonCreateAccount = findViewById<Button>(R.id.buttonCreateAccount)
         val buttonSignIn = findViewById<Button>(R.id.buttonSignIn)
+        // Nota: Si quieres darle funcionalidad al botón de Google más tarde,
+        // agrégalo aquí: val buttonGoogle = findViewById<Button>(R.id.buttonSignInGmail)
 
-        // Configurar el "listener" para el clic del botón "Crear Cuenta"
+        // Configurar el click del botón "Crear Cuenta"
         buttonCreateAccount.setOnClickListener {
-            // Crear un Intent para navegar a LoginActivity
             val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent) // Iniciar LoginActivity
-            // No llamamos a finish() aquí porque el usuario podría querer volver a la pantalla de bienvenida.
+            startActivity(intent)
         }
 
-        // Configurar el "listener" para el clic del botón "Iniciar Sesión"
+        // Configurar el click del botón "Iniciar Sesión"
         buttonSignIn.setOnClickListener {
-            // Por ahora, vamos a navegar a MainActivity como un placeholder para la pantalla de inicio de sesión.
-            // Más adelante, crearemos una 'SignInActivity' dedicada.
-            val intent = Intent(this, SignInActivity::class.java) // Placeholder: cambiar a SignInActivity
-            startActivity(intent) // Iniciar la actividad de inicio de sesión (temporalmente MainActivity)
-            // Aquí podrías decidir si quieres llamar a finish() o no.
-            // Si la pantalla de inicio de sesión no permite volver a la bienvenida, usa finish().
-            // Por ahora, dejémoslo sin finish() para permitir el back.
+            val intent = Intent(this, SignInActivity::class.java)
+            startActivity(intent)
         }
     }
 }

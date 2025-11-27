@@ -2,89 +2,84 @@ package com.example.gym4house
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager // <--- Necesario para el truco visual
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.gym4house.databinding.ActivitySignInBinding
 import com.google.firebase.auth.FirebaseAuth
-// No necesitas FirebaseFirestore en SignInActivity a menos que guardes/leas algo específico aquí
-// import com.google.firebase.firestore.FirebaseFirestore
 
 class SignInActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignInBinding
     private lateinit var auth: FirebaseAuth
-    // private lateinit var db: FirebaseFirestore // Elimina esta línea si no la usas
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // 1. TRUCO VISUAL: Quitar la barra de estado (Status Bar)
+        // Esto es vital para que tu fondo oscuro se vea completo
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+        )
+
         binding = ActivitySignInBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // Inicializar Firebase Auth
         auth = FirebaseAuth.getInstance()
-        // db = FirebaseFirestore.getInstance() // Elimina o comenta esta línea si no la usas
+
+        // Listener botón volver (Si pusiste la flecha atrás en el XML)
+        binding.btnBack.setOnClickListener {
+            finish() // Vuelve a la pantalla de bienvenida
+        }
 
         // Listener para el botón de inicio de sesión
         binding.buttonSignIn.setOnClickListener {
             performLogin()
         }
 
-        // Listener para el TextView que lleva a la pantalla de Registro
+        // Listener para ir a Registro
         binding.textViewGoToRegister.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
+            val intent = Intent(this, LoginActivity::class.java) // Asumo que LoginActivity es tu registro
             startActivity(intent)
-            // No uses finish() aquí si quieres que el usuario pueda volver a la pantalla de inicio de sesión
         }
     }
-
-    // *** ¡ESTE MÉTODO onStart() FUE ELIMINADO/COMENTADO! ***
-    /*
-    override fun onStart() {
-        super.onStart()
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-    }
-    */
 
     private fun performLogin() {
+        // Nota: Al usar TextInputLayout, es mejor obtener el texto así, pero como lo tienes funciona bien.
         val email = binding.editTextSignInCorreo.text.toString().trim()
         val password = binding.editTextSignInContrasena.text.toString().trim()
 
-        // 1. Validaciones básicas de campos
+        // Validaciones
         if (email.isEmpty()) {
-            binding.editTextSignInCorreo.error = "El correo no puede estar vacío"
+            // Un toque pro: Poner el error en el Layout contenedor, no en el edittext
+            binding.tilEmail.error = "El correo es necesario"
             binding.editTextSignInCorreo.requestFocus()
             return
-        }
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.editTextSignInCorreo.error = "Ingresa un correo electrónico válido"
-            binding.editTextSignInCorreo.requestFocus()
-            return
-        }
-        if (password.isEmpty()) {
-            binding.editTextSignInContrasena.error = "La contraseña no puede estar vacía"
-            binding.editTextSignInContrasena.requestFocus()
-            return
+        } else {
+            binding.tilEmail.error = null // Limpiar error
         }
 
-        // 2. Iniciar sesión con Firebase Authentication
+        if (password.isEmpty()) {
+            binding.tilPassword.error = "Falta la contraseña"
+            binding.editTextSignInContrasena.requestFocus()
+            return
+        } else {
+            binding.tilPassword.error = null
+        }
+
+        // Login con Firebase
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Inicio de sesión exitoso
-                    Toast.makeText(this, "¡Bienvenido de nuevo!", Toast.LENGTH_SHORT).show()
-                    // Redirige a la MainActivity
+                    Toast.makeText(this, "¡A entrenar!", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
-                    finish() // Finaliza esta actividad
+                    finish()
                 } else {
-                    // Fallo en el inicio de sesión
                     val errorMessage = task.exception?.message ?: "Error al iniciar sesión."
-                    Toast.makeText(this, "Fallo al iniciar sesión: $errorMessage", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Error: $errorMessage", Toast.LENGTH_LONG).show()
                 }
             }
     }

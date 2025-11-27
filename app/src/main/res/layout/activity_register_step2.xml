@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black">
+    android:background="@android:color/black"
+    tools:context=".RegisterStep2Activity">
 
     <ImageView
-        android:id="@+id/ivBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
@@ -32,201 +32,199 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/tvStep"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:text="Paso 2 de 2"
+        android:textColor="#FF9800"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/btnBack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btnBack" />
+
+    <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="Crea tu Perfil"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:text="Configura tu\nCuerpo"
         android:textColor="@android:color/white"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/btnBack"
-        app:layout_constraintStart_toEndOf="@id/btnBack"
-        app:layout_constraintTop_toTopOf="@id/btnBack" />
+        android:textSize="32sp"
+        android:fontFamily="sans-serif-black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnBack" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="24dp"
         android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingHorizontal="24dp"
-            android:paddingBottom="40dp"
-            android:gravity="center_horizontal">
+            android:paddingBottom="40dp">
 
-            <FrameLayout
-                android:layout_width="wrap_content"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilEdad"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp">
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/ivProfilePic"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:src="@android:drawable/ic_menu_camera"
-                    android:scaleType="centerCrop"
-                    android:padding="20dp"
-                    android:background="#80000000"
-                    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
-                    app:strokeColor="@android:color/white"
-                    app:strokeWidth="2dp" />
-
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="bottom|end"
-                    android:src="@android:drawable/ic_input_add"
-                    android:background="@drawable/gradient_overlay"
-                    app:tint="@android:color/white"
-                    android:backgroundTint="#FF9800"/>
-            </FrameLayout>
-
-            <TextView
-                android:text="Foto de Perfil (Opcional)"
-                android:textColor="#B3FFFFFF"
-                android:textSize="12sp"
-                android:layout_marginTop="-16dp"
-                android:layout_marginBottom="16dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:hint="Edad"
+                app:boxBackgroundColor="#99000000"
+                app:boxStrokeColor="@android:color/white"
+                app:cursorColor="@android:color/white"
+                app:hintTextColor="@android:color/white">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTextEdad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:orientation="horizontal">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilNombre"
+                    android:id="@+id/tilPeso"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginEnd="6dp"
-                    android:hint="Nombre"
+                    android:hint="Peso (kg)"
                     app:boxBackgroundColor="#99000000"
                     app:boxStrokeColor="@android:color/white"
-                    app:hintTextColor="@android:color/white"
-                    app:cursorColor="@android:color/white">
+                    app:hintTextColor="@android:color/white">
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/editTextNombre"
+                        android:id="@+id/editTextPeso"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@android:color/white"
-                        android:inputType="textPersonName" />
+                        android:inputType="numberDecimal" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilApellido"
+                    android:id="@+id/tilAltura"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="6dp"
-                    android:hint="Apellido"
+                    android:hint="Altura (cm)"
                     app:boxBackgroundColor="#99000000"
                     app:boxStrokeColor="@android:color/white"
-                    app:hintTextColor="@android:color/white"
-                    app:cursorColor="@android:color/white">
+                    app:hintTextColor="@android:color/white">
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/editTextApellido"
+                        android:id="@+id/editTextAltura"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@android:color/white"
-                        android:inputType="textPersonName" />
+                        android:inputType="numberDecimal" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
+            <TextView
+                android:text="Tu Plan de Entrenamiento"
+                android:textColor="#FF9800"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp"/>
+
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilCorreo"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:id="@+id/tilObjetivo"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:hint="Correo Electrónico"
+                android:hint="Objetivo Principal"
                 app:boxBackgroundColor="#99000000"
                 app:boxStrokeColor="@android:color/white"
-                app:hintTextColor="@android:color/white"
-                app:cursorColor="@android:color/white"
-                app:startIconDrawable="@drawable/ic_email"
-                app:startIconTint="@android:color/white">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextCorreo"
+                app:hintTextColor="@android:color/white">
+                <AutoCompleteTextView
+                    android:id="@+id/autoCompleteObjetivo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
-                    android:inputType="textEmailAddress" />
+                    android:inputType="none"
+                    android:textColor="@android:color/white"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilContrasena"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:id="@+id/tilExperiencia"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:hint="Contraseña"
+                android:hint="Nivel de Experiencia"
                 app:boxBackgroundColor="#99000000"
-                app:endIconMode="password_toggle"
-                app:endIconTint="@android:color/white"
                 app:boxStrokeColor="@android:color/white"
-                app:hintTextColor="@android:color/white"
-                app:cursorColor="@android:color/white"
-                app:startIconDrawable="@drawable/ic_lock"
-                app:startIconTint="@android:color/white">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextContrasena"
+                app:hintTextColor="@android:color/white">
+                <AutoCompleteTextView
+                    android:id="@+id/autoCompleteExperiencia"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
-                    android:inputType="textPassword" />
+                    android:inputType="none"
+                    android:textColor="@android:color/white"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilConfirmarContrasena"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:id="@+id/tilActividad"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:hint="Confirmar Contraseña"
+                android:hint="Nivel Actividad Física Actual"
                 app:boxBackgroundColor="#99000000"
-                app:endIconMode="password_toggle"
-                app:endIconTint="@android:color/white"
                 app:boxStrokeColor="@android:color/white"
-                app:hintTextColor="@android:color/white"
-                app:cursorColor="@android:color/white">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextConfirmarContrasena"
+                app:hintTextColor="@android:color/white">
+                <AutoCompleteTextView
+                    android:id="@+id/autoCompleteActividad"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
-                    android:inputType="textPassword" />
+                    android:inputType="none"
+                    android:textColor="@android:color/white"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilTipoEjercicio"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="Tipo de Ejercicio Preferido"
+                app:boxBackgroundColor="#99000000"
+                app:boxStrokeColor="@android:color/white"
+                app:hintTextColor="@android:color/white">
+                <AutoCompleteTextView
+                    android:id="@+id/autoCompleteTipoEjercicio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:textColor="@android:color/white"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/buttonSiguiente"
+                android:id="@+id/buttonFinalizar"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="40dp"
-                android:text="Siguiente Paso  ➜"
+                android:text="Finalizar Registro"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:backgroundTint="@android:color/white"
                 app:cornerRadius="30dp" />
-
-            <TextView
-                android:id="@+id/textViewGoToSignIn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="¿Ya tienes cuenta? Inicia Sesión"
-                android:textColor="@android:color/white"
-                android:textStyle="bold" />
 
         </LinearLayout>
     </ScrollView>

@@ -107,7 +107,7 @@ class PerfilFragment : Fragment() {
         }
         b.buttonEditarEquipamiento.setOnClickListener {
             val intent = android.content.Intent(requireContext(), EquipmentActivity::class.java)
-            intent.putExtra(EquipmentActivity.LAUNCH_MODE_EXTRA, EquipmentActivity.MODE_EDIT_PROFILE)
+            intent.putExtra(EquipmentActivity.LAUNCH_MODE_EXTRA, EquipmentActivity.MODE_EDIT)
             startActivity(intent)
         }
         b.buttonCerrarSesion.setOnClickListener {

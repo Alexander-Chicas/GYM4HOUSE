@@ -5,136 +5,146 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cream_background"
-    tools:context=".WelcomeActivity">
+    android:background="@android:color/black">
 
-    <!-- Header con Logo y Nombre de la App -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/logoCardView"
+    <ImageView
+        android:id="@+id/ivBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:alpha="0.6"
+        android:src="@drawable/background_gym"
+        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/gradient_overlay" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieWelcome"
         android:layout_width="140dp"
         android:layout_height="140dp"
-        android:layout_marginBottom="16dp"
-        app:cardCornerRadius="70dp"
-        app:cardElevation="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/appNameTextView"
+        android:layout_marginTop="40dp"
+        app:lottie_rawRes="@raw/animacion_gym"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:strokeWidth="0dp">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/logoImageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/logo_content_description"
-            android:scaleType="centerCrop"
-            android:src="@drawable/logo" />
-
-    </com.google.android.material.card.MaterialCardView>
+    <TextView
+        android:id="@+id/tvSlogan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="ENTRENA SIN LÍMITES"
+        android:textColor="#FFFFFF"
+        android:letterSpacing="0.15"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lottieWelcome" />
 
     <TextView
         android:id="@+id/appNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
-        android:text="@string/app_name"
-        android:textColor="@android:color/black"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:text="GYM\nFOR\nHOUSE"
+        android:textColor="@android:color/white"
+        android:textSize="56sp"
+        android:fontFamily="sans-serif-black"
+        android:lineSpacingExtra="-10dp"
+        android:shadowColor="#AA000000"
+        android:shadowDx="0"
+        android:shadowDy="4"
+        android:shadowRadius="12"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSlogan" />
+
+
+    <TextView
+        android:id="@+id/termsPrivacyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="@string/terms_privacy_notice"
+        android:textColor="#66FFFFFF"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Guideline para centrar el contenido y separar header de los botones -->
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/btnGoogleCircle"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardBackgroundColor="@android:color/white"
+        app:cardCornerRadius="25dp"
+        app:cardElevation="6dp"
+        app:layout_constraintBottom_toTopOf="@+id/termsPrivacyTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_gmail"
+            app:tint="@null" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/tvSeparator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.55" />
-
-    <!-- Botones de Acción -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonSignIn"
-        style="@style/Widget.Material3.Button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:backgroundTint="?attr/colorPrimary"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
-        android:text="@string/button_sign_in_gymforhouse"
-        android:textColor="?attr/colorOnPrimary"
-        android:textSize="18sp"
-        app:cornerRadius="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="— o conecta con —"
+        android:textColor="#80FFFFFF"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/btnGoogleCircle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonCreateAccount"
         style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginBottom="12dp"
         android:text="@string/button_create_account"
-        android:textColor="?attr/colorPrimary"
-        android:textSize="18sp"
-        app:cornerRadius="16dp"
-        app:layout_constraintEnd_toEndOf="@id/buttonSignIn"
-        app:layout_constraintStart_toStartOf="@id/buttonSignIn"
-        app:layout_constraintTop_toBottomOf="@id/buttonSignIn"
-        app:strokeColor="?attr/colorPrimary" />
-
-    <!-- Separador y Botón de Gmail -->
-    <TextView
-        android:id="@+id/orSignInWithText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/or_sign_in_with"
-        android:textColor="@color/text_dark_gray"
-        android:textSize="14sp"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:cornerRadius="30dp"
+        app:strokeColor="@android:color/white"
+        app:strokeWidth="2dp"
+        app:layout_constraintBottom_toTopOf="@id/tvSeparator"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttonCreateAccount" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonSignInGmail"
-        style="@style/Widget.Material3.Button.TonalButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:backgroundTint="@color/gym_brown_variant"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
-        android:text="@string/button_sign_in_gmail"
-        android:textColor="?attr/colorOnSecondary"
-        android:textSize="18sp"
-        app:cornerRadius="16dp"
-        app:iconGravity="textStart"
-        app:iconPadding="16dp"
-        app:layout_constraintEnd_toEndOf="@id/buttonCreateAccount"
-        app:layout_constraintStart_toStartOf="@id/buttonCreateAccount"
-        app:layout_constraintTop_toBottomOf="@id/orSignInWithText" />
-
-    <!-- Aviso de Términos y Privacidad -->
-    <TextView
-        android:id="@+id/termsPrivacyTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:gravity="center"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:text="@string/terms_privacy_notice"
-        android:textColor="@color/text_dark_gray"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/buttonSignInGmail"
-        app:layout_constraintStart_toStartOf="@id/buttonSignInGmail" />
+        android:id="@+id/buttonSignIn"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/button_sign_in_gymforhouse"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:backgroundTint="@android:color/white"
+        app:cornerRadius="30dp"
+        app:layout_constraintBottom_toTopOf="@id/buttonCreateAccount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
